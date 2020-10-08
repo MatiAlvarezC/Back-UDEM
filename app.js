@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const Routes = require('./src/Routes/index')
- 
-// Prueba numero 1000 sdasdas
+//Mensaje de prueba a Daniel
+
 const app = express();
 
 app.use(express.json());
