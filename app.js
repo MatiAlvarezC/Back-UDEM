@@ -5,11 +5,22 @@ const Routes = require('./src/Routes/index')
 
 const app = express();
 
+const PORT = process.env.PORT || 3001;
+
+
+//Database
+const db = require('./src/database/connection')
+db.authenticate().then(() => { 
+    console.log('Connection has been established successfully.');
+  }).catch(err => console.error('Unable to connect to the databes:', err));
+
+
+
 app.use(express.json());
 app.use(cors());
 Routes(app)
 
 
-app.listen(3001, () => {
-    console.log('Started in PORT = ',3001)
-})
+app.listen(PORT, () => {
+    console.log('Started on PORT ',PORT);
+});

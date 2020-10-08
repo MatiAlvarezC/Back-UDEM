@@ -1,7 +1,7 @@
 const { Sequelize }  = require('sequelize');
 
 
-const db = new Sequelize('EXPEDIENTE', 'sa', 'password', {
+module.exports = new Sequelize('EXPEDIENTE', 'sa', 'password', {
   dialect: 'mssql',
   host: 'localhost',
   port: '1433',
@@ -19,6 +19,4 @@ const db = new Sequelize('EXPEDIENTE', 'sa', 'password', {
   },
 });
 
-db.authenticate().then(() => { 
-  console.log('Connection has been established successfully.');
-}).catch(err => console.error('Unable to connect to the databes:', err));
+
