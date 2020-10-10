@@ -1,17 +1,14 @@
-const { Sequelize } = require("../database/connection")
-
-const sequelize = require('sequelize');
-const db = require('../database/connection');
-
-const Deporte = db.define('deporte',{
-    id_deporte: {
-        type: sequelize.TINYINT,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    nombre_deporte: {
-        type: sequelize.STRING(30)
-    }
-});
-
-module.exports = Deporte;
+module.exports = (db, Sequelize) => {
+    return db.define('deporte',{
+        id_deporte: {
+            type: Sequelize.TINYINT,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
+        nombre_deporte: {
+            type: Sequelize.CHAR(30),
+            allowNull: false
+        }
+    });
+};

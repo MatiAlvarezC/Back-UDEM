@@ -1,7 +1,6 @@
 const { Sequelize }  = require('sequelize');
 
-
-module.exports = new Sequelize('EXPEDIENTE', 'sa', 'password', {
+module.exports = new Sequelize('TEST2', 'sa', 'password', {
   dialect: 'mssql',
   host: 'localhost',
   port: '1433',
