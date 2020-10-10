@@ -1,9 +1,9 @@
 const { Sequelize }  = require('sequelize');
 
-module.exports = new Sequelize('TEST2', 'sa', 'password', {
+module.exports = new Sequelize('udem', 'udem', 'auto2020', {
   dialect: 'mssql',
-  host: 'localhost',
-  port: '1433',
+  host: 'udem2.ctpkwltoxq0t.sa-east-1.rds.amazonaws.com',
+  port: '5432',
   config: {
     options: {
       encrypt: true,
