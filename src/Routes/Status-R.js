@@ -6,9 +6,10 @@ const router = express.Router();
 /*-- Ruta inicial del proyecto--*/
 router.get('/', Status_R.status);
 
+
+
 module.exports = router;
 
 
-//test
 
 
