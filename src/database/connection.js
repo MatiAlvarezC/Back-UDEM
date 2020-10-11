@@ -1,6 +1,9 @@
+require('dotenv').config();
+
 const { Sequelize }  = require('sequelize');
 
-module.exports = new Sequelize('udem', 'udem', 'auto2020', {
+
+module.exports = new Sequelize(process.env.BBDD, process.env.USUARIOBBDD, process.env.PASSWORDBBDD, {
   dialect: 'mssql',
   host: 'udem2.ctpkwltoxq0t.sa-east-1.rds.amazonaws.com',
   port: '5432',

@@ -1,35 +1,19 @@
 const router = require('express').Router();
-
+const DeportesController = require('../../Controllers/api/deportes');
+const { check, validationResult } = require('express-validator');
 const { Deporte } = require('../../database/database');
 
-router.get('/', async (req, res) => {
-    const deportes = await Deporte.findAll();
-    res.json(deportes);
-});
 
-router.get('/:deporteId', async (req, res) => {
-    const deporte = await Deporte.findByPk(req.params.deporteId);
-    res.json(deporte);
-});
+router.get('/', DeportesController.get_all);
 
-router.post('/', async (req, res) => {
-    const deporte = await Deporte.create(req.body);
-    res.json(deporte);
-});
+router.get('/:deporteId', DeportesController.get_by_id);
 
-router.put('/:deporteId', async (req, res) => {
-    await Deporte.update(req.body, {
-        where: { id_deporte: req.params.deporteId}
-    });
-    const deporte = await Deporte.findByPk(req.params.deporteId);
-    res.json({ success: "modificado correctamente", deporte });
-});
+router.post('/', [
+    check('nombre_deporte').not().isEmpty().withMessage('El campo nombre es obligatorio'),
+], DeportesController.create);
 
-router.delete('/:deporteId', async (req, res) =>{
-    await Deporte.destroy({
-        where: { id_deporte: req.params.deporteId}
-    });
-    res.json({ succes: "Se ha eliminado el deporte" });;
-});
+router.put('/:deporteId', DeportesController.update);
+
+router.delete('/:deporteId', DeportesController.destroy);
 
 module.exports = router;
