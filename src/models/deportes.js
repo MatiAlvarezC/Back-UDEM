@@ -1,5 +1,5 @@
 module.exports = (db, Sequelize) => {
-    return db.define('deporte',{
+    return db.define('DEPORTES',{
         id_deporte: {
             type: Sequelize.TINYINT,
             primaryKey: true,

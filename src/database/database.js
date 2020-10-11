@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('./connection');
-const DeporteModel = require('../models/deporte');
+const DeporteModel = require('../models/deportes');
 
 db.authenticate().then(() => { 
     console.log('Connection has been established successfully.');
