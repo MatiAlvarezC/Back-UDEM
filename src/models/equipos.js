@@ -1,12 +1,12 @@
 module.exports = (db, Sequelize) => {
-    return db.define('Deportes',{
-        id_deporte: {
+    return db.define('Equipos',{
+        id_equipo: {
             type: Sequelize.TINYINT,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
         },
-        nombre_deporte: {
+        nombre_equipo: {
             type: Sequelize.STRING(20),
             allowNull: false
         }

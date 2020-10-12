@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const DeportesController = require('../../Controllers/api/deportes');
-const { check, validationResult } = require('express-validator');
-const { Deporte } = require('../../database/database');
+const { check } = require('express-validator');
+
 
 
 router.get('/', DeportesController.get_all);
