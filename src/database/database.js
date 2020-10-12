@@ -48,12 +48,6 @@ Deportista.belongsTo(Campus);
 Programa.hasMany(Deportista);
 Deportista.belongsTo(Programa);
 
-
-db.sync({ force: false })
-    .then(() => {
-        console.log('Tablas sincronizadas');
-    });
-
 module.exports = {
     Deporte,
     Equipo,
