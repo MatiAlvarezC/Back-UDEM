@@ -27,29 +27,29 @@ const Campus = CampusModel(db, Sequelize);
 const Programa = ProgramaModel(db, Sequelize);
 
 
-Deporte.hasMany(Equipo);
+Deporte.hasMany(Equipo, { foreignKey: { name: 'DeporteIdDeporte', allowNull: false }});
 Equipo.belongsTo(Deporte);
 
-Entrenador.hasMany(Equipo);
+Entrenador.hasMany(Equipo, { foreignKey: { name: 'EntrenadoreIdEntrenador', allowNull: false }});
 Equipo.belongsTo(Entrenador);
 
-Genero.hasMany(Equipo);
+Genero.hasMany(Equipo, { foreignKey: { name: 'GeneroIdGenero', allowNull: false }});
 Equipo.belongsTo(Genero);
 
 Deportista.belongsToMany(Equipo, { through: DeportistaEquipo });
 Equipo.belongsToMany(Deportista, { through: DeportistaEquipo });
 
-Estado.hasMany(DeportistaEquipo);
+Estado.hasMany(DeportistaEquipo, { foreignKey: { name: 'EstadoIdEstado', allowNull: false }});
 DeportistaEquipo.belongsTo(Estado);
 
-Campus.hasMany(Deportista);
+Campus.hasMany(Deportista, { foreignKey: { name: 'CampusIdCampus', allowNull: false }});
 Deportista.belongsTo(Campus);
 
-Programa.hasMany(Deportista);
+Programa.hasMany(Deportista, { foreignKey: { name: 'ProgramaIdPrograma', allowNull: false }});
 Deportista.belongsTo(Programa);
 
 
-db.sync({ force: false })
+db.sync({ force: true })
     .then(() => {
         console.log('Tablas sincronizadas');
     });
