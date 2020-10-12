@@ -1,9 +1,8 @@
 module.exports = (db, Sequelize) => {
     return db.define('Entrenadores',{
         id_entrenador: {
-            type: Sequelize.TINYINT,
+            type: Sequelize.STRING(11),
             primaryKey: true,
-            autoIncrement: true,
             allowNull: false
         },
         nombres_entrenador: {
