@@ -1,5 +1,5 @@
 const { Deporte } = require('../../database/database');
-const { check, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 
 exports.get_all = async (req, res) => {
     const deportes = await Deporte.findAll();
