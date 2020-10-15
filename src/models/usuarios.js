@@ -1,11 +1,11 @@
 module.exports = (db, Sequelize) => {
-    return db.define('Deportistas', {
-        matricula: {
+    return db.define('Entrenadores', {
+        nomina: {
             type: Sequelize.STRING(20),
             primaryKey: true,
             allowNull: false
         },
-        nombres_deportista: {
+        nombres: {
             type: Sequelize.STRING(50),
             allowNull: false
         },
@@ -17,28 +17,16 @@ module.exports = (db, Sequelize) => {
             type: Sequelize.STRING(30),
             allowNull: false
         },
-        fecha_nacimiento: {
-            type: Sequelize.DATEONLY
-        },
-        fecha_inicio_programa: {
-            type: Sequelize.DATEONLY
-        },
-        altura: {
-            type: Sequelize.FLOAT
-        },
-        peso_kg: {
-            type: Sequelize.FLOAT
-        },
-        numero: {
-            type: Sequelize.TINYINT,
-            unique: true
-        },
         celular: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.STRING(11),
             allowNull: false
         },
         correo: {
             type: Sequelize.STRING(50),
+            allowNull: false
+        },
+        password: {
+            type: Sequelize.STRING(20),
             allowNull: false
         },
         talla_camisa: {
@@ -47,9 +35,26 @@ module.exports = (db, Sequelize) => {
         talla_short: {
             type: Sequelize.STRING(3)
         },
+        puesto: {
+            type: Sequelize.STRING(20)
+        },
         isActive: {
             type: Sequelize.BOOLEAN,
             allowNull: false
+
+        },
+        isAdmin: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+
         }
     });
 };
+
+
+
+
+
+
+
+
