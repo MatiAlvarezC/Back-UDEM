@@ -36,7 +36,7 @@ const Programa = ProgramaModel(db, Sequelize);
 Deporte.hasMany(Equipo, {foreignKey: {name: 'DeporteIdDeporte', allowNull: false}});
 Equipo.belongsTo(Deporte);
 
-Entrenador.hasMany(Equipo, {foreignKey: {name: 'EntrenadoreIdEntrenador', allowNull: false}});
+Entrenador.hasMany(Equipo, {foreignKey: {name: 'UsuarioIdUsuario', allowNull: false}});
 Equipo.belongsTo(Entrenador);
 
 Genero.hasMany(Equipo, {foreignKey: {name: 'GeneroIdGenero', allowNull: false}});

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const db = require('./connection');
 const DeporteModel = require('../models/deportes');
 const EquipoModel = require('../models/equipos');
-const EntrenadorModel = require('../models/usuarios');
+const UsuarioModel = require('../models/usuarios');
 const GeneroModel = require('../models/generos');
 const DeportistaModel = require('../models/deportistas');
 const EstadoModel = require('../models/estados');
@@ -17,7 +17,7 @@ db.authenticate().then(() => {
 
 const Deporte = DeporteModel(db, Sequelize);
 const Equipo = EquipoModel(db, Sequelize);
-const Entrenador = EntrenadorModel(db, Sequelize);
+const Usuario = UsuarioModel(db, Sequelize);
 const Genero = GeneroModel(db, Sequelize);
 const Deportista = DeportistaModel(db, Sequelize);
 const DeportistaEquipo = db.define('DeportistaEquipo', {
@@ -36,8 +36,8 @@ const Programa = ProgramaModel(db, Sequelize);
 Deporte.hasMany(Equipo, {foreignKey: {name: 'DeporteIdDeporte', allowNull: false}});
 Equipo.belongsTo(Deporte);
 
-Entrenador.hasMany(Equipo, {foreignKey: {name: 'EntrenadoreIdEntrenador', allowNull: false}});
-Equipo.belongsTo(Entrenador);
+Usuario.hasMany(Equipo, {foreignKey: {name: 'UsuarioIdUsuario', allowNull: false}});
+Equipo.belongsTo(Usuario);
 
 Genero.hasMany(Equipo, {foreignKey: {name: 'GeneroIdGenero', allowNull: false}});
 Equipo.belongsTo(Genero);
@@ -58,7 +58,7 @@ Deportista.belongsTo(Programa);
 module.exports = {
     Deporte,
     Equipo,
-    Entrenador,
+    Usuario,
     Genero,
     Deportista,
     DeportistaEquipo,
