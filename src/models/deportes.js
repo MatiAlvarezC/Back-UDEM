@@ -7,10 +7,10 @@ module.exports = (db, Sequelize) => {
             allowNull: false
         },
         nombre_deporte: {
-            type: Sequelize.STRING(20),
+            type: Sequelize.STRING(50),
             allowNull: false
         },
-        habilitado_deporte: {
+        isActive: {
             type: Sequelize.BOOLEAN,
             allowNull: false
         }

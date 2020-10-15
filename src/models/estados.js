@@ -9,6 +9,12 @@ module.exports = (db, Sequelize) => {
         nombre_estado: {
             type: Sequelize.STRING(20),
             allowNull: false
+        },
+        isActive:{
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+
+
         }
     });
 };

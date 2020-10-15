@@ -6,8 +6,8 @@ module.exports = (db, Sequelize) => {
             autoIncrement: true,
             allowNull: false
         },
-        nombre_genero: {
-            type: Sequelize.STRING(20),
+        nombre: {
+            type: Sequelize.STRING(30),
             allowNull: false
         }
     });

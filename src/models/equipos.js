@@ -1,16 +1,16 @@
 module.exports = (db, Sequelize) => {
     return db.define('Equipos',{
         id_equipo: {
-            type: Sequelize.TINYINT,
+            type: Sequelize.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
         },
-        nombre_equipo: {
-            type: Sequelize.STRING(20),
+        nombre: {
+            type: Sequelize.STRING(50),
             allowNull: false
         },
-        habilitado_equipo: {
+        isActive: {
             type: Sequelize.BOOLEAN,
             allowNull: false
         }
