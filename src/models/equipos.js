@@ -9,6 +9,10 @@ module.exports = (db, Sequelize) => {
         nombre_equipo: {
             type: Sequelize.STRING(20),
             allowNull: false
+        },
+        habilitado_equipo: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
         }
     });
 };

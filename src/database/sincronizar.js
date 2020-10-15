@@ -21,6 +21,12 @@ const Entrenador = EntrenadorModel(db, Sequelize);
 const Genero = GeneroModel(db, Sequelize);
 const Deportista = DeportistaModel(db, Sequelize);
 const DeportistaEquipo = db.define('DeportistaEquipo',{
+  fecha_inicio: {
+    type: Sequelize.DATE
+  },
+  fecha_salida: {
+    type: Sequelize.DATE
+  }
 });
 const Estado = EstadoModel(db, Sequelize);
 const Campus = CampusModel(db, Sequelize);

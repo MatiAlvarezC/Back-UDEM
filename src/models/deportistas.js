@@ -44,8 +44,9 @@ module.exports = (db, Sequelize) => {
             type: Sequelize.STRING(50),
             allowNull:false
         },
-        habilitado: {
-            type: Sequelize.BOOLEAN
+        habilitado_deportista: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
         }
     });
 };
