@@ -47,5 +47,6 @@ module.exports = (db, Sequelize) => {
         habilitado_deportista: {
             type: Sequelize.BOOLEAN,
             allowNull: false
+        }
     });
 };
