@@ -22,10 +22,10 @@ const Genero = GeneroModel(db, Sequelize);
 const Deportista = DeportistaModel(db, Sequelize);
 const DeportistaEquipo = db.define('DeportistaEquipo',{
   fecha_inicio: {
-    type: Sequelize.DATE
+    type: Sequelize.DATEONLY
   },
   fecha_salida: {
-    type: Sequelize.DATE
+    type: Sequelize.DATEONLY
   }
 });
 const Estado = EstadoModel(db, Sequelize);
