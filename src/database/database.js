@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('./connection');
+const DB = require('./connection');
 const DeporteModel = require('../models/deportes');
 const EquipoModel = require('../models/equipos');
 const EntrenadorModel = require('../models/entrenadores');
@@ -10,11 +10,11 @@ const CampusModel = require('../models/campus');
 const ProgramaModel = require('../models/programas');
 
 
-db.authenticate().then(() => { 
+DB.authenticate().then(() => {
     console.log('Connection has been established successfully.');
   }).catch(err => console.error('Unable to connect to the databes:', err));
 
-  
+
 const Deporte = DeporteModel(db, Sequelize);
 const Equipo = EquipoModel(db, Sequelize);
 const Entrenador = EntrenadorModel(db, Sequelize);
