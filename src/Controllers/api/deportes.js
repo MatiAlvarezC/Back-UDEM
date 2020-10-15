@@ -1,13 +1,13 @@
-const { Deporte } = require('../../database/database');
+const { Deporte, Equipo } = require('../../database/database');
 const { validationResult } = require('express-validator');
 
 exports.get_all = async (req, res) => {
-    const deportes = await Deporte.findAll();
+    const deportes = await Deporte.findAll({include: Equipo});
     res.json(deportes);
 };
 
 exports.get_by_id = async (req, res) => {
-    const deporte = await Deporte.findByPk(req.params.deporteId);
+    const deporte = await Deporte.findByPk(req.params.deporteId, {include: Equipo});
     res.json(deporte);
 };
 

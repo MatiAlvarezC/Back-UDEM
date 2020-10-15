@@ -18,10 +18,10 @@ module.exports = (db, Sequelize) => {
             allowNull: false
         },
         fecha_nacimiento_deportista: {
-            type: Sequelize.DATE
+            type: Sequelize.DATEONLY
         },
         fecha_inicio_programa: {
-            type: Sequelize.DATE
+            type: Sequelize.DATEONLY
         },
         altura_cm: {
             type: Sequelize.FLOAT
@@ -44,8 +44,8 @@ module.exports = (db, Sequelize) => {
             type: Sequelize.STRING(50),
             allowNull:false
         },
-        habilitado: {
-            type: Sequelize.BOOLEAN
-        }
+        habilitado_deportista: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
     });
 };

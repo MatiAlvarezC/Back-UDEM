@@ -5,6 +5,10 @@ module.exports = (db, Sequelize) => {
             primaryKey: true,
             allowNull: false
         },
+        nomina: {
+            type: Sequelize.STRING(20),
+            allowNull: false
+        },
         nombres_entrenador: {
             type: Sequelize.STRING(50),
             allowNull: false
@@ -18,7 +22,7 @@ module.exports = (db, Sequelize) => {
             allowNull: false
         },
         fecha_nacimiento_entrenador: {
-            type: Sequelize.DATE
+            type: Sequelize.DATEONLY   
         },
         celular_entrenador: {
             type: Sequelize.STRING(11),
