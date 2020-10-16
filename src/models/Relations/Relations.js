@@ -32,9 +32,9 @@ Equipo.belongsTo(Deporte)
 Genero.hasMany(Equipo, {foreignKey: {allowNull: false}})
 Equipo.belongsTo(Genero)
 
-Equipo.belongsToMany(Deportista, {through: Deportista_en_Equipo, foreignKey: {allowNull: false}})
-Deportista.belongsToMany(Equipo, {through: Deportista_en_Equipo, foreignKey: {allowNull: false}})
+Equipo.belongsToMany(Deportista, {through: Deportista_en_Equipo})
+Deportista.belongsToMany(Equipo, {through: Deportista_en_Equipo})
 
-Equipo.belongsToMany(Usuario, {through: Usuario_en_Equipo, foreignKey: {allowNull: false}})
-Usuario.belongsToMany(Equipo, {through: Usuario_en_Equipo, foreignKey: {allowNull: false}})
+Equipo.belongsToMany(Usuario, {through: Usuario_en_Equipo})
+Usuario.belongsToMany(Equipo, {through: Usuario_en_Equipo})
 

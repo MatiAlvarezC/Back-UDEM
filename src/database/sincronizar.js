@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+/**const Sequelize = require('sequelize');
 const db = require('./connection');
 const DeporteModel = require('../models/Deporte');
 const EquipoModel = require('../models/Equipo');
@@ -58,4 +58,4 @@ Deportista.belongsTo(Programa);
 db.sync({force: true})
     .then(() => {
         console.log('Tablas sincronizadas');
-    });
+    });**/
