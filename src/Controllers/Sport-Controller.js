@@ -1,4 +1,6 @@
 const Deporte = require('../models/Deporte')
+const Equipo = require('../models/Equipo')
+const Deportista = require('../models/Deportista')
 
 const create = async (req, res) => {
     const {nombre, isActive} = req.body
@@ -38,16 +40,44 @@ const update = (req, res) => {
     }
 }
 
-const getAll = (req, res) => {
+const getAll = async (req, res) => {
     try {
-        Deporte.findAll().then(deportes => {
+        let deportes = new Array(0)
+        await Deporte.findAll({
+            attributes: ['nombre', 'id'],
+            include: [
+                {
+                    model: Equipo,
+                    attributes: ['nombre'],
+                    include: [
+                        {
+                            model: Deportista,
+                            attributes: ['nombres'],
+                        }
+                    ]
+                }
+
+            ]
+        }).then(async DEPORTES => {
+            let aux = 0;
+            for (let i = 0; i < DEPORTES.length; i++) {
+                for (let j = 0; j < DEPORTES[i].equipos.length; j++) {
+                    aux += DEPORTES[i].equipos[j].deportista.length /**CONTADOR DE JUGADORES POR EQUIPO**/
+                }
+                await deportes.push({
+                    id: DEPORTES[i].id,
+                    nombre: DEPORTES[i].nombre,
+                    equipos: DEPORTES[i].equipos.length,
+                    deportistas: aux
+                })
+                aux = 0;
+            }
             return res.send(deportes)
         })
     } catch (e) {
         return res.status(400).send({message: e.message})
     }
 }
-
 
 const getByID = (req, res) => {
     try {
@@ -62,7 +92,6 @@ const getByID = (req, res) => {
         return res.status(400).send({message: e.message})
     }
 }
-
 
 module.exports = {
     create,
