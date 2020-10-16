@@ -47,6 +47,15 @@ const Deportista = DB.define('deportista', {
         type: Sequelize.STRING(3),
         allowNull: true
     },
+    agno_debut: {
+        type: Sequelize.SMALLINT,
+        allowNull: false
+    },
+    isCaptain: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'isCaptain'
+    },
     isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
