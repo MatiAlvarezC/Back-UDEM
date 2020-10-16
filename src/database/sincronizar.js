@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 const db = require('./connection');
-const DeporteModel = require('../models/deportes');
-const EquipoModel = require('../models/equipos');
-const EntrenadorModel = require('../models/usuarios');
-const GeneroModel = require('../models/generos');
-const DeportistaModel = require('../models/deportistas');
-const EstadoModel = require('../models/estados');
-const CampusModel = require('../models/campus');
-const ProgramaModel = require('../models/programas');
+const DeporteModel = require('../models/Deporte');
+const EquipoModel = require('../models/Equipo');
+const EntrenadorModel = require('../models/Usuario');
+const GeneroModel = require('../models/Genero');
+const DeportistaModel = require('../models/Deportista');
+const EstadoModel = require('../models/Estado');
+const CampusModel = require('../models/Campus');
+const ProgramaModel = require('../models/Programa');
 
 
 db.authenticate().then(() => {

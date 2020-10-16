@@ -1,20 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const Routes = require('./src/Routes/index')
-
+const routes = require('./src/Routes/index')
+dotenv.config();
 const app = express();
-
-require('./src/database/database')
-
-
-const PORT = process.env.PORT || 3001;
-
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(cors());
-Routes(app)
 
+routes(app);
+require('./src/database/connection');
 
 app.listen(PORT, () => {
     console.log('Started on PORT ',PORT);

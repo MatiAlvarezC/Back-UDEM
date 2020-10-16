@@ -1,9 +1,9 @@
 const Status_R = require('./Status-R');
-const apiRouter = require('./api');
+const User_R = require('./User_Routes')
 
+require("../models/Relations/Relations")
 
 module.exports = (app) => {
     app.use('/',Status_R);
-    app.use('/api', apiRouter);
+    app.use('/user', User_R);
 }
- 

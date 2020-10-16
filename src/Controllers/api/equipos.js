@@ -1,10 +1,13 @@
-const { Equipo, Genero, Deporte, Entrenador } = require('../../database/database');
+const Equipo = require("../../models/Equipo")
+const Genero = require("../../models/Genero")
+const Deporte = require("../../models/Deporte")
+const Usuario = require("../../models/Usuario")
 const { validationResult } = require('express-validator');
 
 exports.get_all = async (req, res) => {
     const equipos = await Equipo.findAll({ include: [
-        {model: Deporte}, 
-        {model: Entrenador}, 
+        {model: Deporte},
+        {model: Entrenador},
         {model: Genero}
     ]});
     res.json(equipos);
@@ -12,8 +15,8 @@ exports.get_all = async (req, res) => {
 
 exports.get_by_id = async (req, res) => {
     const equipo = await Equipo.findByPk(req.params.equipoId, { include: [
-        {model: Deporte}, 
-        {model: Entrenador}, 
+        {model: Deporte},
+        {model: Entrenador},
         {model: Genero}
     ]});
     res.json(equipo);
@@ -34,8 +37,8 @@ exports.update = async (req, res) => {
         where: { id_equipo: req.params.equipoId}
     });
     const equipo = await Equipo.findByPk(req.params.equipoId, { include: [
-        {model: Deporte}, 
-        {model: Entrenador}, 
+        {model: Deporte},
+        {model: Entrenador},
         {model: Genero}]});
     res.json({ success: "modificado correctamente", equipo });
 };

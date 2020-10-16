@@ -4,7 +4,7 @@ const Sequelize = require('sequelize')
 const Tipo_Sangre = DB.define('tipo_sangre', {
     id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },

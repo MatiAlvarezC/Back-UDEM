@@ -1,4 +1,5 @@
-const { Genero, Equipo } = require('../../database/database');
+const Genero = require("../../models/Genero")
+const Equipo = require("../../models/Equipo")
 const { validationResult } = require('express-validator');
 
 exports.get_all = async (req, res) => {
