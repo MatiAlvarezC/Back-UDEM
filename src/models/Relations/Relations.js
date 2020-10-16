@@ -11,30 +11,30 @@ const Genero = require("../Genero")
 const Usuario_en_Equipo = require("../Usuario_en_Equipo")
 const Usuario = require("../Usuario")
 
-Estado.hasMany(Deportista, {foreignKey: {allowNull: false}})
-Deportista.belongsTo(Estado)
+Estado.hasMany(Deportista, {foreignKey: {allowNull: false, name: 'estado_id'}})
+Deportista.belongsTo(Estado, {foreignKey: {name: 'estado_id'}})
 
-Programa.hasMany(Deportista, {foreignKey: {allowNull: false}})
-Deportista.belongsTo(Programa)
+Programa.hasMany(Deportista, {foreignKey: {allowNull: false, name: 'programa_id'}})
+Deportista.belongsTo(Programa, {foreignKey: {name: 'programa_id'}})
 
-Campus.hasMany(Deportista, {foreignKey: {allowNull: false}})
-Deportista.belongsTo(Campus)
+Campus.hasMany(Deportista, {foreignKey: {allowNull: false, name: 'campus_id'}})
+Deportista.belongsTo(Campus, {foreignKey: {name: 'campus_id'}})
 
-Datos_Medicos.hasOne(Deportista, {foreignKey: {allowNull: false}})
-Deportista.belongsTo(Datos_Medicos)
+Datos_Medicos.hasOne(Deportista, {foreignKey: {allowNull: false, name: 'datos_medicos_numero_poliza'}})
+Deportista.belongsTo(Datos_Medicos, {foreignKey: {name: 'datos_medicos_numero_poliza'}})
 
-Tipo_Sangre.hasMany(Datos_Medicos, {foreignKey: {allowNull: false}})
-Datos_Medicos.belongsTo(Tipo_Sangre)
+Tipo_Sangre.hasMany(Datos_Medicos, {foreignKey: {allowNull: false, name: 'tipo_sangre_id'}})
+Datos_Medicos.belongsTo(Tipo_Sangre, {foreignKey: {name: 'tipo_sangre_id'}})
 
-Deporte.hasMany(Equipo, {foreignKey: {allowNull: false}})
-Equipo.belongsTo(Deporte)
+Deporte.hasMany(Equipo, {foreignKey: {allowNull: false, name: 'deporte_id'}})
+Equipo.belongsTo(Deporte, {foreignKey: {name: 'deporte_id'}})
 
-Genero.hasMany(Equipo, {foreignKey: {allowNull: false}})
-Equipo.belongsTo(Genero)
+Genero.hasMany(Equipo, {foreignKey: {allowNull: false, name: 'genero_id'}})
+Equipo.belongsTo(Genero, {foreignKey: {name: 'genero_id'}})
 
-Equipo.belongsToMany(Deportista, {through: Deportista_en_Equipo})
-Deportista.belongsToMany(Equipo, {through: Deportista_en_Equipo})
+Equipo.belongsToMany(Deportista, {through: Deportista_en_Equipo, foreignKey: {name: 'equipo_id'}})
+Deportista.belongsToMany(Equipo, {through: Deportista_en_Equipo, foreignKey: {name: 'deportista_matricula'}})
 
-Equipo.belongsToMany(Usuario, {through: Usuario_en_Equipo})
-Usuario.belongsToMany(Equipo, {through: Usuario_en_Equipo})
+Equipo.belongsToMany(Usuario, {through: Usuario_en_Equipo, foreignKey: {name: 'equipo_id'}})
+Usuario.belongsToMany(Equipo, {through: Usuario_en_Equipo, foreignKey: {name: 'usuario_nomina'}})
 
