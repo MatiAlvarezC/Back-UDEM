@@ -1,6 +1,5 @@
 const Usuario = require("../models/Usuario")
 const Equipo = require("../models/Equipo")
-const {validationResult} = require('express-validator');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -31,38 +30,13 @@ const login = async (req, res) => {
         /*const expiresIn = 600*/ /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
 
         return res.send(jwt.sign(payload, process.env.SECRET))
+
     } catch (e) {
         return res.sendStatus(500)
     }
 }
-
-const getAll = async (req, res) => {
-
-    try {
-        const Users = await Usuario.findAll({
-            include: {
-                model: Equipo
-            }
-        })
-
-        if(Users.length === 0) {
-            return res.sendStatus(404)
-        }
-
-        return res.send(Users)
-    } catch (e) {
-        console.log(e)
-        return res.sendStatus(500)
-    }
-}
-
-exports.get_by_id = async (req, res) => {
-    const usuario = await Usuario.findByPk(req.params.usuarioId, {include: Equipo});
-    res.json(usuario);
-};
 
 const create = async (req, res) => {
-
     try {
         let password, username
         const {
@@ -89,6 +63,10 @@ const create = async (req, res) => {
         do {
             try {
                 username = ((name.concat(apellido_paterno)).concat((x.toString()).padStart(2, 0))).toLowerCase()
+                /**
+                 * Este conjunto de funciones se encarga de generar el username compuesto de la primera silaba del primer
+                 * nombre, el apellido paterno completo y un numero que parte desde el "01".
+                 */
 
                 await Usuario.create({
                     nomina,
@@ -109,7 +87,6 @@ const create = async (req, res) => {
                 counter++
                 return res.sendStatus(200)
             } catch (e) {
-                console.log(e.errors[0].value)
                 if (username === e.errors[0].value) {
                     x++
                 } else if (nomina === e.errors[0].value) {
@@ -119,25 +96,125 @@ const create = async (req, res) => {
                     counter++
                     return res.send("correo duplicado", 400)
                 } else {
-                    console.log(e)
+                    counter++
                     return res.sendStatus(400)
                 }
+                /**
+                 * Este conjunto de if verifica primero que el username no esté repetido, en caso de que lo esté, le
+                 * suma un valor de 1 a la secuencia numérica que acompaña al username.
+                 *
+                 * El siguiente if verifica que la primary key "nomina" no se encuentre repetida, en caso de que lo esté
+                 * devuelve un código de error con un mensaje.
+                 *
+                 * El siguiente if verifica que el correo no esté repetido, en caso de que lo esté devuelve un código de
+                 * error con un mensaje diferente al anterior.
+                 *
+                 * El else final si es que ninguno de los errores anteriores aplica, devuelve solamente un código de error
+                 * 400.
+                 */
             }
         } while (counter < 1)
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
 
-exports.update = async (req, res) => {
-    await Usuario.update(req.body, {
-        where: {id_usuario: req.params.usuarioId}
-    });
-    const usuario = await Usuario.findByPk(req.params.usuarioId);
-    res.json({success: "modificado correctamente", usuario});
-};
+const getAll = async (req, res) => {
+    try {
+        const Users = await Usuario.findAll({
+            include: {
+                model: Equipo
+            }
+        })
+
+        if (Users.length === 0) {
+            return res.sendStatus(404)
+        }
+
+        return res.send(Users)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const getById = async (req, res) => {
+    try {
+        const user = Usuario.findByPk(req.params.id)
+
+        if (!user) {
+            return res.sendStatus(404)
+        }
+
+        res.send(user)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const update = async (req, res) => {
+    try {
+        const {
+            nomina,
+            nombres,
+            apellido_paterno,
+            apellido_materno,
+            celular,
+            correo,
+            talla_camisa,
+            talla_short,
+            puesto,
+            isAdmin
+        } = req.body
+
+        const user = Usuario.findByPk(req.params.id)
+
+        if (!user) {
+            return res.sendStatus(404)
+        }
+
+        user.update({
+            nomina,
+            nombres,
+            apellido_paterno,
+            apellido_materno,
+            celular,
+            correo,
+            talla_camisa,
+            talla_short,
+            puesto,
+            isAdmin
+        })
+
+        return res.sendStatus(201)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const updateStatus = (req, res) => {
+    try {
+        const isActive = req.body
+
+        const user = Usuario.findByPk(req.params.id)
+
+        if (!user) {
+            return res.sendStatus(404)
+        }
+
+        user.update({
+            isActive
+        })
+
+        return res.sendStatus(201)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
 
 exports.get_user_login = async (req, res) => {
     const usuario = await Usuario.findByPk(req.params.usuarioId, {
@@ -149,5 +226,8 @@ exports.get_user_login = async (req, res) => {
 module.exports = {
     login,
     create,
-    getAll
+    getAll,
+    getById,
+    update,
+    updateStatus
 }
