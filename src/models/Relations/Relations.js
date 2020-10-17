@@ -11,6 +11,11 @@ const Genero = require("../Genero")
 const Usuario_en_Equipo = require("../Usuario_en_Equipo")
 const Usuario = require("../Usuario")
 
+/**
+ * Las foreign keys se declaran con allowNull para tener concordancia con lo especificado en los modelos
+ * También se declara un name, ya que de lo contrario las foreign key se declaran en camelCase
+ */
+
 Estado.hasMany(Deportista, {foreignKey: {allowNull: false, name: 'estado_id'}})
 Deportista.belongsTo(Estado, {foreignKey: {name: 'estado_id'}})
 
