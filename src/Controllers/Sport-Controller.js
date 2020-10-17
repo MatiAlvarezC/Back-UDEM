@@ -152,24 +152,25 @@ const getAll = async (req, res) => {
 /** ======= Obtención de lista de deportes por pagina, orden y tipo ======= **/
 const getByPage = async (req, res) => {
     let {page, order, by} = req.params
-    const itemsPerPage = 12;
+    const itemsPerPage = 6;
     const from = (((page <= 0 ? 1 : page) - 1) * itemsPerPage);
     order = order.toUpperCase();
+    by = by.toUpperCase();
     /** Solo puede recibir ASC o DESC **/
     let byTeam = false;
     let byAthlete = false;
     if (order !== 'ASC' && order !== 'DESC') {
         order = 'ASC'
     }
-    if (by !== 'nombre' && by !== 'isActive') {
-        if (by === 'Equipos') {
+    if (by !== 'NOMBRE' && by !== 'ISACTIVE') {
+        if (by === 'EQUIPOS') {
             byTeam = true;
-            by = 'nombre'
-        } else if (by === 'deportistas') {
+            by = 'NOMBRE'
+        } else if (by === 'DEPORTISTAS') {
             byAthlete = true
-            by = 'nombre'
+            by = 'NOMBRE'
         } else {
-            by = 'nombre'
+            by = 'NOMBRE'
         }
     }
     try {
