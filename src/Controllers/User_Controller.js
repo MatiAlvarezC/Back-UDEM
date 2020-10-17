@@ -63,6 +63,10 @@ const create = async (req, res) => {
         do {
             try {
                 username = ((name.concat(apellido_paterno)).concat((x.toString()).padStart(2, 0))).toLowerCase()
+                /**
+                 * Este conjunto de funciones se encarga de generar el username compuesto de la primera silaba del primer
+                 * nombre, el apellido paterno completo y un numero que parte desde el "01".
+                 */
 
                 await Usuario.create({
                     nomina,
@@ -95,6 +99,19 @@ const create = async (req, res) => {
                     counter++
                     return res.sendStatus(400)
                 }
+                /**
+                 * Este conjunto de if verifica primero que el username no esté repetido, en caso de que lo esté, le
+                 * suma un valor de 1 a la secuencia numérica que acompaña al username.
+                 *
+                 * El siguiente if verifica que la primary key "nomina" no se encuentre repetida, en caso de que lo esté
+                 * devuelve un código de error con un mensaje.
+                 *
+                 * El siguiente if verifica que el correo no esté repetido, en caso de que lo esté devuelve un código de
+                 * error con un mensaje diferente al anterior.
+                 *
+                 * El else final si es que ninguno de los errores anteriores aplica, devuelve solamente un código de error
+                 * 400.
+                 */
             }
         } while (counter < 1)
 
