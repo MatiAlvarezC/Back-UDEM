@@ -13,7 +13,8 @@ const Usuario = require("../Usuario")
 
 /**
  * Las foreign keys se declaran con allowNull para tener concordancia con lo especificado en los modelos
- * También se declara un name, ya que de lo contrario las foreign key se declaran en camelCase
+ * También se declara un name, ya que de lo contrario las foreign key se declaran en camelCase y no concuerda con las
+ * tablas subidas a la database
  */
 
 Estado.hasMany(Deportista, {foreignKey: {allowNull: false, name: 'estado_id'}})
