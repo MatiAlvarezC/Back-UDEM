@@ -44,7 +44,7 @@ const getAll = async (req, res) => {
     try {
         let deportes = new Array(0)
         await Deporte.findAll({
-            attributes: ['nombre', 'id','src'],
+            attributes: ['nombre', 'id', 'src', 'isActive'],
             include: [
                 {
                     model: Equipo,
@@ -67,6 +67,7 @@ const getAll = async (req, res) => {
                     id: DEPORTES[i].id,
                     nombre: DEPORTES[i].nombre,
                     src: DEPORTES[i].src,
+                    isActive: DEPORTES[i].isActive,
                     equipos: DEPORTES[i].equipos.length,
                     deportistas: aux
                 })
