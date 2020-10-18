@@ -82,11 +82,14 @@ async function getCounts(DEPORTES) {
 
 /** ======= FUNCIONES DE CONTEO PARA EQUIPOS Y JUGADORES======= **/
 
-/** ======= FUNCIONES DE CONTEO PARA EQUIPOS Y JUGADORES======= **/
+/** ======= FUNCIONES DE FILTRO======= **/
 /**
  *
+ * Filtros de isActive, devuelve los deportes Habilitados/Deshabilitados
+ * y si non es el filtro que se solicita, devuelve la lista de deportes con ordenamiento.
  * @param DEPORTES
- * @returns {Promise<awaited T[]|any>}
+ * @param data
+ * @returns object
  */
 async function filterByActive(DEPORTES, data) {
     let {byTeam, byAthlete, from, itemsPerPage, order} = data
@@ -102,14 +105,15 @@ async function filterByActive(DEPORTES, data) {
     }
 }
 
-/** ======= FUNCIONES DE CONTEO PARA EQUIPOS Y JUGADORES======= **/
+/** ======= FUNCIONES DE FILTRO======= **/
+
 
 /** ======= FUNCIONES CRUD ======= **/
 
 const create = async (req, res) => {
     const {nombre, isActive} = req.body
     if (isActive == null || nombre == null) {
-        return res.status(400).send({message: 'Uno de los campos esta vacio'})
+        return res.status(400).send({message: 'Uno de los campos esta vacío'})
     } else {
         try {
             await Deporte.findOne({where: {nombre}}).then(result => {
@@ -130,12 +134,12 @@ const create = async (req, res) => {
     }
 }
 
-const update = (req, res) => {
+const update = async (req, res) => {
     try {
-        Deporte.update({
+        await Deporte.update({
             ...req.body
-        }, {where: {id: req.body.id}}).then(result => {
-            return res.send(result)
+        }, {where: {id: req.params.id}}).then(result => {
+            return res.send({status: 'SUCCESS'})
         }).catch(e => {
             return res.status(400).send({message: e.message})
         })
@@ -194,14 +198,13 @@ const getByPage = async (req, res) => {
         }
     }
     try {
-
         if (by === 'ISACTIVE') {
             await Deporte.findAll({
                 attributes: ['nombre', 'id', 'src', 'isActive'],
                 order: [[by, order]],
                 //offset: from,
                 //limit: itemsPerPage,
-                where: {isActive: order === 'ASC' ? true : false},
+                where: {isActive: order === 'ASC'},
                 include: [
                     {
                         model: Equipo,

@@ -5,7 +5,7 @@ const { isAuth } = require('../Middlewares/Auth')
 const { isAdmin } = require('../Middlewares/Admin')
 
 router.post('/register', Sport_C.create)
-router.patch('/update', Sport_C.update)
+router.patch('/update/:id', Sport_C.update)
 router.get('/getAll', Sport_C.getAll)
 
 /** Obtiene la cantidad de paginas, segun la cantidad de deportes, y por la cantidad de deportes por paginas**/
