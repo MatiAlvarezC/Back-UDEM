@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-const isAuth = (req, res ,next) => {
+const isAuth = (req, res, next) => {
     try {
         const { token } = req.headers;
         if (token) {
@@ -18,7 +18,6 @@ const isAuth = (req, res ,next) => {
             .status(e.code || 500)
             .send({ status: e.status || 'ERROR', message: e.message })
     }
-
 }
 
 module.exports = { isAuth };
