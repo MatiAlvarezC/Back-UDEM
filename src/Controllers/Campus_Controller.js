@@ -3,10 +3,8 @@ const Campus = require("../models/Campus");
 
 const create = async (req, res) => {
     try{
-        const nombre = req.body
-
         await Campus.create({
-            nombre
+            ...req.body
         })
 
         return res.sendStatus(200)
@@ -18,7 +16,7 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const campus = Campus.findAll()
+        const campus = await Campus.findAll()
 
         if(campus.length === 0) {
             return res.sendStatus(404)
@@ -33,16 +31,14 @@ const getAll = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const nombre = req.body
-
-        const campus = Campus.findByPk(req.params.id)
+        const campus = await Campus.findByPk(req.params.id)
 
         if(!campus) {
             return res.sendStatus(404)
         }
 
-        campus.update({
-            nombre
+        await campus.update({
+            ...req.body
         })
 
         return res.sendStatus(201)

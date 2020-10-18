@@ -4,78 +4,54 @@ const Tipo_Sangre = require("../models/Tipo_Sangre");
 const Estado = require("../models/Estado");
 const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
+const {Op} = require('sequelize')
 
 const create = async (req, res) => {
     try {
-
         const {
             matricula,
-            nombres,
-            apellido_paterno,
-            apellido_materno,
-            fecha_nacimiento,
-            altura,
-            peso_kg,
-            celular,
             correo,
-            talla_camisa,
-            talla_short,
-            agno_debut,
-            isCaptain,
-            isActive,
-            estado_id,
-            programa_id,
-            campus_id,
+            datos_medicos_numero_poliza,
             numero_poliza,
-            vigencia_poliza,
-            telefono_aseguradora,
-            condiciones_aseguradora,
-            nombre_contacto_emergencia,
-            telefono_contacto_emergencia,
-            enfermedades,
-            medicamentos,
-            cirugias_previas,
-            tipo_sangre_id
         } = req.body
 
+        const player = await Deportista.findOne({
+            where: {
+                [Op.or]: [
+                    {matricula},
+                    {correo},
+                    {datos_medicos_numero_poliza}
+                ]
+            }
+        })
+
+        if (player) {
+            if (player.matricula === matricula) {
+                return res.status(400).send(["Numero de matricula duplicado"])
+            } else if (player.correo === correo) {
+                return res.status(400).send(["Direccion de correo duplicada"])
+            } else if (player.datos_medicos_numero_poliza === numero_poliza) {
+                return res.status(400).send(["Numero de poliza duplicado"])
+            }
+        }
+
+        const medical = await Datos_Medicos.findByPk(numero_poliza)
+
+        if (medical) {
+            return res.status(400).send("Numero de poliza duplicado")
+        }
+
         await Datos_Medicos.create({
-            numero_poliza,
-            vigencia_poliza,
-            telefono_aseguradora,
-            condiciones_aseguradora,
-            nombre_contacto_emergencia,
-            telefono_contacto_emergencia,
-            enfermedades,
-            medicamentos,
-            cirugias_previas,
-            tipo_sangre_id
+            ...req.body
         })
 
         await Deportista.create({
-            matricula,
-            nombres,
-            apellido_paterno,
-            apellido_materno,
-            fecha_nacimiento,
-            altura,
-            peso_kg,
-            celular,
-            correo,
-            talla_camisa,
-            talla_short,
-            agno_debut,
-            isCaptain,
-            isActive,
-            estado_id,
-            programa_id,
-            campus_id,
-            datos_medicos_numero_poliza: numero_poliza
+            ...req.body
         })
 
         return res.sendStatus(200)
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -83,9 +59,10 @@ const create = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const player = await Deportista.findByPk(req.params.id, {
-            include: [{
-                model: Programa
-            },
+            include: [
+                {
+                    model: Programa
+                },
                 {
                     model: Campus
                 },
@@ -128,23 +105,7 @@ const getAll = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const {
-            nombres,
-            apellido_paterno,
-            apellido_materno,
-            fecha_nacimiento,
-            altura,
-            peso_kg,
-            celular,
-            correo,
-            talla_camisa,
-            talla_short,
-            agno_debut,
-            isCaptain,
-            estado_id,
-            programa_id,
-            campus_id
-        } = req.body
+        const {correo, numero_poliza} = req.body
 
         const player = await Deportista.findByPk(req.params.id)
 
@@ -152,46 +113,43 @@ const update = async (req, res) => {
             return res.sendStatus(404)
         }
 
-        await player.update({
-            nombres,
-            apellido_paterno,
-            apellido_materno,
-            fecha_nacimiento,
-            altura,
-            peso_kg,
-            celular,
-            correo,
-            talla_camisa,
-            talla_short,
-            agno_debut,
-            isCaptain,
-            estado_id,
-            programa_id,
-            campus_id
-        })
+        if (correo !== undefined) {
+            const player2 = await Deportista.findOne({
+                where: {
+                    correo
+                }
+            })
 
-        return res.sendStatus(201)
-    } catch (e) {
-        return res.sendStatus(500)
-    }
-}
-
-const updateStatus = (req, res) => {
-    try {
-        const isActive = req.body
-
-        const player = Deportista.findByPk(req.params.id)
-
-        if(!player) {
-            return res.sendStatus(404)
+            if (player2) {
+                return res.status(400).send("Direccion de Correo Duplicada")
+            }
         }
 
-        player.update({
-            isActive
+        if (numero_poliza!== undefined) {
+            const player3 = await Deportista.findOne({
+                where: {
+                    datos_medicos_numero_poliza: numero_poliza
+                }
+            })
+
+            if(player3) {
+                return res.status(400).send("Numero de Poliza Duplicada")
+            }
+        }
+
+        const poliza = await Datos_Medicos.findByPk(player.datos_medicos_numero_poliza)
+
+        await poliza.update({
+            ...req.body
+        })
+
+        await player.update({
+            ...req.body
         })
 
         return res.sendStatus(201)
     } catch (e) {
+        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -201,5 +159,4 @@ module.exports = {
     getById,
     getAll,
     update,
-    updateStatus
 }

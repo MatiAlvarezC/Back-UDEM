@@ -11,6 +11,11 @@ const Campus = DB.define('campus', {
     nombre: {
         type: Sequelize.STRING(30),
         allowNull: false
+    },
+    isActive: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'isActive'
     }
 })
 
