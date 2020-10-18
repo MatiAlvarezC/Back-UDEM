@@ -2,6 +2,7 @@ const express = require('express');
 const Sport_C = require('../Controllers/Sport-Controller')
 const router = express.Router();
 const { isAuth } = require('../Middlewares/Auth')
+const { isAdmin } = require('../Middlewares/Admin')
 
 router.post('/register', Sport_C.create)
 router.patch('/update', Sport_C.update)
