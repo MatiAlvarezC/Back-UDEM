@@ -24,7 +24,8 @@ const login = async (req, res) => {
 
         const payload = {
             sub: User.username,
-            name: User.nombres
+            name: User.nombres,
+            isAdmin: User.isAdmin
         }
 
         /*const expiresIn = 600*/ /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
