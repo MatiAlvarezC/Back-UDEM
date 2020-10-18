@@ -12,11 +12,13 @@ exports.get_by_id = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+    console.log(req.body);
     const errors = validationResult(req);
 
     if(!errors.isEmpty()){
         return res.status(422).json({ errors: errors });
     }
+    
     const deporte = await Deporte.create(req.body);
     res.json(deporte);
 };
