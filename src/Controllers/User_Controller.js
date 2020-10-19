@@ -166,8 +166,8 @@ const update = async (req, res) => {
     }
 }
 
-exports.get_user_login = async (req, res) => {
-    const usuario = await Usuario.findByPk(req.params.usuarioId, {
+const get_user_login = async (req, res) => {
+    const usuario = await Usuario.findByPk(req.params.id, {
         attributes: ['nombres', 'apellido_paterno', 'apellido_materno', 'isAdmin', 'isActive']
     });
     return res.send(usuario)
@@ -179,4 +179,5 @@ module.exports = {
     getAll,
     getById,
     update,
+    get_user_login
 }
