@@ -1,6 +1,7 @@
 const Deporte = require('../models/Deporte')
 const Equipo = require('../models/Equipo')
 const Deportista = require('../models/Deportista')
+const itemsPerPage = 6; /** deportes por pagina **/
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
 /**
@@ -50,7 +51,7 @@ function compareToHighestA(a, b) {
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
 
-/** ======= FUNCIONES DE CONTEO PARA EQUIPOS Y JUGADORES======= **/
+/** ======= FUNCIONES DE CONTEO PARA EQUIPOS Y JUGADORES ======= **/
 
 /**
  * @param DEPORTES
@@ -81,12 +82,38 @@ async function getCounts(DEPORTES) {
 
 /** ======= FUNCIONES DE CONTEO PARA EQUIPOS Y JUGADORES======= **/
 
+/** ======= FUNCIONES DE FILTRO======= **/
+/**
+ *
+ * Filtros de isActive, devuelve los deportes Habilitados/Deshabilitados
+ * y si non es el filtro que se solicita, devuelve la lista de deportes con ordenamiento.
+ * @param DEPORTES
+ * @param data
+ * @returns object
+ */
+async function filterByActive(DEPORTES, data) {
+    let {byTeam, byAthlete, from, itemsPerPage, order} = data
+    let deportes = await getCounts(DEPORTES)
+    if (byTeam) {
+        deportes = await deportes.sort((order === 'ASC') ? compareToHighest : compareToLowest)
+        return deportes.slice(from, from + itemsPerPage)
+    } else if (byAthlete) {
+        deportes = await deportes.sort((order === 'ASC') ? compareToHighestA : compareToLowestA)
+        return deportes.slice(from, from + itemsPerPage)
+    } else {
+        return deportes.slice(from, from + itemsPerPage)
+    }
+}
+
+/** ======= FUNCIONES DE FILTRO======= **/
+
+
 /** ======= FUNCIONES CRUD ======= **/
 
 const create = async (req, res) => {
     const {nombre, isActive} = req.body
     if (isActive == null || nombre == null) {
-        return res.status(400).send({message: 'Uno de los campos esta vacio'})
+        return res.status(400).send({message: 'Uno de los campos esta vacío'})
     } else {
         try {
             await Deporte.findOne({where: {nombre}}).then(result => {
@@ -107,12 +134,12 @@ const create = async (req, res) => {
     }
 }
 
-const update = (req, res) => {
+const update = async (req, res) => {
     try {
-        Deporte.update({
+        await Deporte.update({
             ...req.body
-        }, {where: {id: req.body.id}}).then(result => {
-            return res.send(result)
+        }, {where: {id: req.params.id}}).then(result => {
+            return res.send({status: 'SUCCESS'})
         }).catch(e => {
             return res.status(400).send({message: e.message})
         })
@@ -120,7 +147,6 @@ const update = (req, res) => {
         return res.status(400).send({message: e.message})
     }
 }
-
 
 const getAll = async (req, res) => {
     try {
@@ -148,11 +174,9 @@ const getAll = async (req, res) => {
 }
 /** ======= FUNCIONES CRUD ======= **/
 
-
 /** ======= Obtención de lista de deportes por pagina, orden y tipo ======= **/
 const getByPage = async (req, res) => {
     let {page, order, by} = req.params
-    const itemsPerPage = 6;
     const from = (((page <= 0 ? 1 : page) - 1) * itemsPerPage);
     order = order.toUpperCase();
     by = by.toUpperCase();
@@ -174,38 +198,68 @@ const getByPage = async (req, res) => {
         }
     }
     try {
-        await Deporte.findAll({
-            attributes: ['nombre', 'id', 'src', 'isActive'],
-            order: [[by, order]],
-            offset: from,
-            limit: itemsPerPage,
-            include: [
-                {
-                    model: Equipo,
-                    attributes: ['nombre'],
-                    include: [
-                        {
-                            model: Deportista,
-                            attributes: ['nombres'],
-                        }
-                    ]
-                }
-            ]
-        }).then(async DEPORTES => {
-            let deportes = await getCounts(DEPORTES)
-            if (byTeam) {
-                return res.send(await deportes.sort((order === 'ASC') ? compareToHighest : compareToLowest))
-            } else if (byAthlete) {
-                return res.send(await deportes.sort((order === 'ASC') ? compareToHighestA : compareToLowestA))
-            } else {
-                return res.send(deportes)
-            }
-        })
+        if (by === 'ISACTIVE') {
+            await Deporte.findAll({
+                attributes: ['nombre', 'id', 'src', 'isActive'],
+                order: [[by, order]],
+                //offset: from,
+                //limit: itemsPerPage,
+                where: {isActive: order === 'ASC'},
+                include: [
+                    {
+                        model: Equipo,
+                        attributes: ['nombre'],
+                        include: [
+                            {
+                                model: Deportista,
+                                attributes: ['nombres'],
+                            }
+                        ]
+                    }
+                ]
+            }).then(async DEPORTES => {
+                let data = {byTeam, byAthlete, from, itemsPerPage, order}
+                return res.send(await filterByActive(DEPORTES, data))
+            })
+        } else {
+            await Deporte.findAll({
+                attributes: ['nombre', 'id', 'src', 'isActive'],
+                order: [[by, order]],
+                //offset: from,
+                //limit: itemsPerPage,
+                include: [
+                    {
+                        model: Equipo,
+                        attributes: ['nombre'],
+                        include: [
+                            {
+                                model: Deportista,
+                                attributes: ['nombres'],
+                            }
+                        ]
+                    }
+                ]
+            }).then(async DEPORTES => {
+                let data = {byTeam, byAthlete, from, itemsPerPage, order}
+                return res.send(await filterByActive(DEPORTES, data))
+            })
+        }
+
     } catch (e) {
         return res.status(500).send({message: e.message})
     }
 }
+/** ======= Obtención de lista de deportes por pagina, orden y tipo ======= **/
 
+const getMaxPages = async (req, res) => {
+    try {
+        const items = await Deporte.count();
+        const maxPages = Math.ceil(items / itemsPerPage); // 2
+        return res.send({pages: maxPages})
+    } catch (e) {
+        return res.status(500).send({message: 'INTERNAL_ERROR'})
+    }
+}
 
 const getByID = (req, res) => {
     try {
@@ -226,5 +280,6 @@ module.exports = {
     update,
     getAll,
     getByID,
-    getByPage
+    getByPage,
+    getMaxPages
 }
