@@ -6,5 +6,6 @@ router.post('/register',Player_C.create)
 router.get('/getAll',Player_C.getAll)
 router.get('/:id',Player_C.getById)
 router.patch('/update/:id',Player_C.update)
+router.post('/assignToTeam/:id',Player_C.assignToTeam)
 
 module.exports = router

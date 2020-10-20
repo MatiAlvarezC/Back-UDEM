@@ -1,5 +1,6 @@
 const Datos_Medicos = require("../models/Datos_Medicos");
 const Deportista = require("../models/Deportista");
+const Equipo = require('../models/Equipo')
 const Tipo_Sangre = require("../models/Tipo_Sangre");
 const Estado = require("../models/Estado");
 const Campus = require("../models/Campus");
@@ -154,9 +155,38 @@ const update = async (req, res) => {
     }
 }
 
+const assignToTeam = async (req, res) => {
+    try {
+        const {
+            equipo_id,
+            fecha_inicio,
+            fecha_salida,
+            posicion,
+            numero
+        } = req.body
+        
+        const player = await Deportista.findByPk(req.params.id)
+        const team = await Equipo.findByPk(equipo_id)
+        
+        player.addEquipo(team, {
+            through: {
+                fecha_inicio,
+                fecha_salida,
+                posicion,
+                numero
+            }
+        })
+        return res.sendStatus(200)
+    } catch (e) {
+        console.log(e)
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     create,
     getById,
     getAll,
     update,
+    assignToTeam
 }
