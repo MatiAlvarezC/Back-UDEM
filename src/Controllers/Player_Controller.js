@@ -232,6 +232,6 @@ module.exports = {
     getAll,
     update,
     getByPage,
-    getMaxPages
+    getMaxPages,
     assignToTeam
 }
