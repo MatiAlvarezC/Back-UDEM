@@ -9,7 +9,7 @@ router.get('/:id',User_C.getById)
 router.patch('/update/:id',User_C.update)
 router.post('/assignToTeam/:id',User_C.assignToTeam)
 router.get('/UserLogin/:id',User_C.get_user_login)
-
+router.get('/getAssignedTeamsIds/:id',User_C.getAssignedTeamsIds)
 
 
 module.exports = router

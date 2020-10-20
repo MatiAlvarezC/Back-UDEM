@@ -1,6 +1,7 @@
 const {Op} = require('sequelize')
 const Usuario = require("../models/Usuario")
 const Equipo = require("../models/Equipo")
+const Usuario_en_Equipo = require("../models/Usuario_en_Equipo")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -180,7 +181,22 @@ const assignToTeam = async (req, res) => {
         user.addEquipo(team)
         return res.sendStatus(200)
     } catch (e) {
-        console.log(e)
+        return res.sendStatus(500)
+    }
+}
+
+const getAssignedTeamsIds = async (req, res) => {
+    try {
+        const teamIds = await Usuario_en_Equipo.findAll({
+            where: {
+                usuario_nomina: req.params.id
+            },
+            attributes: [
+                'equipo_id'
+            ]
+        });
+        return res.send(teamIds)
+    } catch (e) {
         return res.sendStatus(500)
     }
 }
@@ -192,5 +208,6 @@ module.exports = {
     getById,
     update,
     get_user_login,
-    assignToTeam
+    assignToTeam,
+    getAssignedTeamsIds
 }
