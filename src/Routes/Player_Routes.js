@@ -8,6 +8,7 @@ router.get('/getMaxPages', Player_C.getMaxPages)
 
 router.get('/:id',Player_C.getById)
 router.patch('/update/:id',Player_C.update)
+router.post('/assignToTeam/:id',Player_C.assignToTeam)
 
 
 

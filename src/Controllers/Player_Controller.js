@@ -159,6 +159,34 @@ const update = async (req, res) => {
     }
 }
 
+const assignToTeam = async (req, res) => {
+    try {
+        const {
+            equipo_id,
+            fecha_inicio,
+            fecha_salida,
+            posicion,
+            numero
+        } = req.body
+
+        const player = await Deportista.findByPk(req.params.id)
+        const team = await Equipo.findByPk(equipo_id)
+
+        player.addEquipo(team, {
+            through: {
+                fecha_inicio,
+                fecha_salida,
+                posicion,
+                numero
+            }
+        })
+        return res.sendStatus(200)
+    } catch (e) {
+        console.log(e)
+        return res.sendStatus(500)
+    }
+}
+
 
 const getByPage = async (req, res) => {
     let {page, order, by} = req.params
@@ -205,4 +233,5 @@ module.exports = {
     update,
     getByPage,
     getMaxPages
+    assignToTeam
 }
