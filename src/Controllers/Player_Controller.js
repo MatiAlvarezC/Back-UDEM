@@ -4,7 +4,12 @@ const Tipo_Sangre = require("../models/Tipo_Sangre");
 const Estado = require("../models/Estado");
 const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
+const Equipo = require("../models/Equipo");
+const Deporte = require("../models/Deporte");
+const Deporte_en_Equipo = require("../models/Deportista_en_Equipo");
 const {Op} = require('sequelize')
+const itemsPerPage = 10;
+/** jugadores por pagina **/
 
 const create = async (req, res) => {
     try {
@@ -125,14 +130,14 @@ const update = async (req, res) => {
             }
         }
 
-        if (numero_poliza!== undefined) {
+        if (numero_poliza !== undefined) {
             const player3 = await Deportista.findOne({
                 where: {
                     datos_medicos_numero_poliza: numero_poliza
                 }
             })
 
-            if(player3) {
+            if (player3) {
                 return res.status(400).send("Numero de Poliza Duplicada")
             }
         }
@@ -154,9 +159,50 @@ const update = async (req, res) => {
     }
 }
 
+
+const getByPage = async (req, res) => {
+    let {page, order, by} = req.params
+    const from = (((page <= 0 ? 1 : page) - 1) * itemsPerPage);
+    order = order.toUpperCase();
+    by = by.toUpperCase();
+    /** Solo puede recibir ASC o DESC **/
+    await Deportista.findAll({
+        attributes: ['matricula', 'nombres', 'apellido_paterno', 'apellido_materno', 'isCaptain', 'isActive', 'agno_debut', 'estado_id'],
+        order: [[by, order]],
+        //limit: 1000,
+        include: [
+            {
+                model: Equipo,
+                attributes: ['id', 'nombre'],
+                include: [
+                    {
+                        model: Deporte,
+                        attributes: ['id', 'nombre'],
+                    }
+
+                ]
+            },
+        ]
+    }).then(async Deportistas => {
+        return res.send(Deportistas.slice(from, from + itemsPerPage))
+    })
+}
+
+const getMaxPages = async (req, res) => {
+    try {
+        const items = await Deportista.count();
+        const maxPages = Math.ceil(items / itemsPerPage); // 2
+        return res.send({pages: maxPages})
+    } catch (e) {
+        return res.status(500).send({message: 'INTERNAL_ERROR'})
+    }
+}
+
 module.exports = {
     create,
     getById,
     getAll,
     update,
+    getByPage,
+    getMaxPages
 }
