@@ -1,3 +1,4 @@
+const {Op} = require('sequelize')
 const Usuario = require("../models/Usuario")
 const Equipo = require("../models/Equipo")
 const bcrypt = require('bcrypt')
@@ -44,14 +45,7 @@ const create = async (req, res) => {
             nomina,
             nombres,
             apellido_paterno,
-            apellido_materno,
-            celular,
             correo,
-            talla_camisa,
-            talla_short,
-            puesto,
-            isActive,
-            isAdmin
         } = req.body
 
         password = await nomina.slice(0, 4);
@@ -62,61 +56,44 @@ const create = async (req, res) => {
         let counter = 0
 
         do {
-            try {
-                username = ((name.concat(apellido_paterno)).concat((x.toString()).padStart(2, 0))).toLowerCase()
-                /**
-                 * Este conjunto de funciones se encarga de generar el username compuesto de la primera silaba del primer
-                 * nombre, el apellido paterno completo y un numero que parte desde el "01".
-                 */
+            username = ((name.concat(apellido_paterno)).concat((x.toString()).padStart(2, 0))).toLowerCase()
+            /**
+             * Este conjunto de funciones se encarga de generar el username compuesto de la primera silaba del primer
+             * nombre, el apellido paterno completo y un numero que parte desde el "01".
+             */
 
-                await Usuario.create({
-                    nomina,
-                    nombres,
-                    apellido_paterno,
-                    apellido_materno,
-                    celular,
-                    correo,
-                    username,
-                    password,
-                    talla_camisa,
-                    talla_short,
-                    puesto,
-                    isActive,
-                    isAdmin
-                })
-
-                counter++
-                return res.sendStatus(200)
-            } catch (e) {
-                if (username === e.errors[0].value) {
-                    x++
-                } else if (nomina === e.errors[0].value) {
-                    counter++
-                    return res.send("nomina duplicada", 400)
-                } else if (correo === e.errors[0].value) {
-                    counter++
-                    return res.send("correo duplicado", 400)
-                } else {
-                    counter++
-                    return res.sendStatus(400)
+            const user = await Usuario.findOne({
+                where: {
+                    [Op.or]: [
+                        {username},
+                        {nomina},
+                        (correo !== null ? {correo} : {})
+                    ]
                 }
-                /**
-                 * Este conjunto de if verifica primero que el username no esté repetido, en caso de que lo esté, le
-                 * suma un valor de 1 a la secuencia numérica que acompaña al username.
-                 *
-                 * El siguiente if verifica que la primary key "nomina" no se encuentre repetida, en caso de que lo esté
-                 * devuelve un código de error con un mensaje.
-                 *
-                 * El siguiente if verifica que el correo no esté repetido, en caso de que lo esté devuelve un código de
-                 * error con un mensaje diferente al anterior.
-                 *
-                 * El else final si es que ninguno de los errores anteriores aplica, devuelve solamente un código de error
-                 * 400.
-                 */
-            }
-        } while (counter < 1)
+            })
 
-    } catch (e) {
+            if (user) {
+                if (username === user.username) {
+                    x++
+                } else if (correo === user.correo) {
+                    return res.status(400).send("Direccion de Correo Duplicada")
+                } else if (nomina === user.nomina) {
+                    return res.status(400).send("Nomina Duplicada")
+                }
+            } else {
+                counter++
+            }
+        } while (counter === 0)
+
+        await Usuario.create({
+            username,
+            password,
+            ...req.body
+        })
+
+        return res.sendStatus(200)
+    } catch
+        (e) {
         return res.sendStatus(500)
     }
 }
@@ -142,7 +119,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const user = Usuario.findByPk(req.params.id)
+        const user = await Usuario.findByPk(req.params.id)
 
         if (!user) {
             return res.sendStatus(404)
@@ -157,68 +134,40 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const {
-            nomina,
-            nombres,
-            apellido_paterno,
-            apellido_materno,
-            celular,
-            correo,
-            talla_camisa,
-            talla_short,
-            puesto,
-            isAdmin
-        } = req.body
+        const {correo} = req.body
 
-        const user = Usuario.findByPk(req.params.id)
+        const user = await Usuario.findByPk(req.params.id)
 
         if (!user) {
             return res.sendStatus(404)
         }
 
-        user.update({
-            nomina,
-            nombres,
-            apellido_paterno,
-            apellido_materno,
-            celular,
-            correo,
-            talla_camisa,
-            talla_short,
-            puesto,
-            isAdmin
-        })
+        if (correo !== undefined) {
+            const user2 = await Usuario.findOne({
+                where: {
+                    correo
+                }
+            })
 
-        return res.sendStatus(201)
-
-    } catch (e) {
-        return res.sendStatus(500)
-    }
-}
-
-const updateStatus = (req, res) => {
-    try {
-        const isActive = req.body
-
-        const user = Usuario.findByPk(req.params.id)
-
-        if (!user) {
-            return res.sendStatus(404)
+            if (user2) {
+                return res.status(400).send("Direccion de Correo Duplicada")
+            }
         }
 
-        user.update({
-            isActive
+        await user.update({
+            ...req.body
         })
 
         return res.sendStatus(201)
 
-    } catch (e) {
+    } catch
+        (e) {
         return res.sendStatus(500)
     }
 }
 
-exports.get_user_login = async (req, res) => {
-    const usuario = await Usuario.findByPk(req.params.usuarioId, {
+const get_user_login = async (req, res) => {
+    const usuario = await Usuario.findByPk(req.params.id, {
         attributes: ['nombres', 'apellido_paterno', 'apellido_materno', 'isAdmin', 'isActive']
     });
     return res.send(usuario)
@@ -230,5 +179,5 @@ module.exports = {
     getAll,
     getById,
     update,
-    updateStatus
+    get_user_login
 }

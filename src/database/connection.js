@@ -4,7 +4,7 @@ dotenv.config();
 
 const DB = new Sequelize(process.env.BBDD, process.env.USUARIOBBDD, process.env.PASSWORDBBDD, {
     dialect: 'mssql',
-    host: 'udem2.ctpkwltoxq0t.sa-east-1.rds.amazonaws.com',
+    host: process.env.HOST,
     port: '5432',
     define: {
         timestamps: false,            /** Desactiva la creación de atributos/columnas createdAt y updatedAt en las tablas **/
@@ -32,10 +32,9 @@ DB.authenticate()       /** Esta función verifica la conexión con la base de d
         console.log('Connection error', error.message)
     })
 
-
 /**DB.sync({force: true})
- .then(() => {
+    .then(() => {
         console.log("All models were synchronized successfully.")
-    })**/
+    })*/
 
 module.exports = DB;
