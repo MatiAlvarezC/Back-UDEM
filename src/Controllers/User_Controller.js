@@ -173,11 +173,24 @@ const get_user_login = async (req, res) => {
     return res.send(usuario)
 }
 
+const assignToTeam = async (req, res) => {
+    try {
+        const user = await Usuario.findByPk(req.params.id)
+        const team = await Equipo.findByPk(req.body.equipo_id)
+        user.addEquipo(team)
+        return res.sendStatus(200)
+    } catch (e) {
+        console.log(e)
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     login,
     create,
     getAll,
     getById,
     update,
-    get_user_login
+    get_user_login,
+    assignToTeam
 }
