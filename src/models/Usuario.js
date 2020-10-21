@@ -38,20 +38,20 @@ const Usuario = DB.define('usuario', {
         allowNull: false
     },
     talla_camisa: {
-        type: Sequelize.STRING(3),
+        type: Sequelize.STRING(5),
         allowNull: true
     },
     talla_short: {
-        type: Sequelize.STRING(3),
+        type: Sequelize.STRING(5),
         allowNull: true
     },
     puesto: {
-        type: Sequelize.STRING(20),
+        type: Sequelize.STRING(50),
         allowNull: true
     },
     isActive: {
         type: Sequelize.BOOLEAN,
-        allowNull: true,
+        allowNull: false,
         field: 'isActive'
     },
     isAdmin: {

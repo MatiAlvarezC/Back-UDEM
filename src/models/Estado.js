@@ -12,6 +12,11 @@ const Estado = DB.define('estado', {
         type: Sequelize.STRING(20),
         allowNull: false
     },
+    isAvailable: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'isAvailable'
+    },
     isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
