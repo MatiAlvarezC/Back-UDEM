@@ -6,7 +6,6 @@ const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
 const Equipo = require("../models/Equipo");
 const Deporte = require("../models/Deporte");
-const Deporte_en_Equipo = require("../models/Deportista_en_Equipo");
 const {Op} = require('sequelize')
 const itemsPerPage = 10;
 /** jugadores por pagina **/
@@ -62,6 +61,7 @@ const create = async (req, res) => {
 }
 
 const getById = async (req, res) => {
+
     try {
         const player = await Deportista.findByPk(req.params.id, {
             include: [
@@ -85,6 +85,7 @@ const getById = async (req, res) => {
         if (!player) {
             return res.sendStatus(404)
         }
+        console.log(player)
 
         return res.send(player)
 
@@ -187,8 +188,12 @@ const assignToTeam = async (req, res) => {
     }
 }
 
-
+/**
+ * En caso de que el deportista no pertenezca a algun equipo
+ * se mostraran los campos como "N/A" correspondientes al deporte
+ **/
 const getByPage = async (req, res) => {
+    let deportistas = []
     let {page, order, by} = req.params
     const from = (((page <= 0 ? 1 : page) - 1) * itemsPerPage);
     order = order.toUpperCase();
@@ -207,12 +212,51 @@ const getByPage = async (req, res) => {
                         model: Deporte,
                         attributes: ['id', 'nombre'],
                     }
-
                 ]
             },
         ]
     }).then(async Deportistas => {
-        return res.send(Deportistas.slice(from, from + itemsPerPage))
+        Deportistas.map(async depo => {
+            if (depo.equipos[0] === undefined) {
+                console.log('test')
+                await deportistas.push({
+                    matricula: depo.matricula,
+                    nombres: depo.nombres,
+                    apellido_paterno: depo.apellido_paterno,
+                    apellido_materno: depo.apellido_materno,
+                    isCaptain: depo.isCaptain,
+                    isActive: depo.isActive,
+                    agno_debut: depo.agno_debut,
+                    equipos: [{
+                        deporte: {nombre: 'N/A'},
+                        deportista_en_equipo: {
+                            fecha_inicio: "N/A",
+                            fecha_salida: "N/A",
+                        }
+                    }]
+                })
+            } else {
+                await deportistas.push({
+                    matricula: depo.matricula,
+                    nombres: depo.nombres,
+                    apellido_paterno: depo.apellido_paterno,
+                    apellido_materno: depo.apellido_materno,
+                    isCaptain: depo.isCaptain,
+                    isActive: depo.isActive,
+                    agno_debut: depo.agno_debut,
+                    equipos: [{
+                        deporte: {nombre: depo.equipos[depo.equipos.length - 1].deporte.nombre},
+                        deportista_en_equipo: {
+                            fecha_inicio: depo.equipos[depo.equipos.length - 1].deportista_en_equipo.fecha_inicio,
+                            fecha_salida: depo.equipos[depo.equipos.length - 1].deportista_en_equipo.fecha_salida
+                        }
+                    }]
+                })
+            }
+        })
+        return res.send(deportistas.slice(from, from + itemsPerPage))
+    }).catch(e => {
+        return res.send({message: e.message})
     })
 }
 
