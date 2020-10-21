@@ -15,7 +15,7 @@ const create = async (req, res) => {
         return res.sendStatus(200)
 
     } catch (e) {
-        return res.sendStatus(500)
+        return res.sendStatus(e)
     }
 }
 
