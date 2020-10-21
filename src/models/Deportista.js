@@ -21,13 +21,13 @@ const Deportista = DB.define('deportista', {
     },
     fecha_nacimiento: {
         type: Sequelize.DATEONLY,
-        allowNull: true
+        allowNull: false
     },
     altura: {
         type: Sequelize.FLOAT,
         allowNull: true
     },
-    peso_kg: {
+    peso: {
         type: Sequelize.FLOAT,
         allowNull: true
     },
@@ -37,15 +37,16 @@ const Deportista = DB.define('deportista', {
     },
     correo: {
         type: Sequelize.STRING(50),
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     talla_camisa: {
-        type: Sequelize.STRING(3),
-        allowNull: true
+        type: Sequelize.STRING(5),
+        allowNull: false
     },
     talla_short: {
-        type: Sequelize.STRING(3),
-        allowNull: true
+        type: Sequelize.STRING(5),
+        allowNull: false
     },
     agno_debut: {
         type: Sequelize.SMALLINT,

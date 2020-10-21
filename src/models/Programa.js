@@ -10,7 +10,12 @@ const Programa = DB.define('programa', {
     },
     nombre: {
         type: Sequelize.STRING(50),
-        allowNull: false
+        allowNull: false,
+    },
+    isActive: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'isActive'
     }
 })
 
