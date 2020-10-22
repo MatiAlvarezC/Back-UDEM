@@ -21,6 +21,10 @@ let sangre = ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"]
 sangre.forEach(blood => {
     Tipo_Sangre.create({nombre: blood})
 })
+let genero = ["Masculino", "Femenino", "Mixto"]
+genero.forEach(genero => {
+    Tipo_Sangre.create({nombre: genero})
+})
 let campus = ["Providencia", "El Llano", "Talca", "Temuco"]
 campus.forEach(camp => {
     Campus.create({nombre: camp, isActive: Status})
