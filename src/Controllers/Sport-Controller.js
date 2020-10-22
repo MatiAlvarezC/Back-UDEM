@@ -1,6 +1,7 @@
 const Deporte = require('../models/Deporte')
 const Equipo = require('../models/Equipo')
 const Deportista = require('../models/Deportista')
+const Usuario = require('../models/Usuario')
 const itemsPerPage = 6; /** deportes por pagina **/
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
@@ -263,7 +264,22 @@ const getMaxPages = async (req, res) => {
 
 const getByID = (req, res) => {
     try {
-        Deporte.findByPk(req.params['id']).then(deporte => {
+        Deporte.findByPk(req.params['id'], {
+            attributes: {exclude: ['src']},
+            include: {
+                model: Equipo,
+                include: [
+                    {
+                        model: Deportista,
+                        attributes: ['matricula', 'nombres', 'apellido_paterno', 'apellido_materno', 'isCaptain', 'isActive', 'agno_debut', 'estado_id']
+                    },
+                    {
+                        model: Usuario,
+                        attributes: ['nombres', 'apellido_paterno', 'apellido_materno', 'nomina']
+                    }
+                ]
+            }
+        }).then(deporte => {
             if (deporte == null) {
                 return res.status(404).send({message: 'NOT_FOUND'})
             } else {
