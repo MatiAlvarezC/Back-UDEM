@@ -198,6 +198,23 @@ const getByPage = async (req, res) => {
     const from = (((page <= 0 ? 1 : page) - 1) * itemsPerPage);
     order = order.toUpperCase();
     by = by.toUpperCase();
+
+    if (order !== 'ASC' && order !== 'DESC') {
+        order = 'ASC'
+    }
+    if (by !== 'NOMBRES' && by !== 'ISACTIVE') {
+        if (by === 'EQUIPOS') {
+            byTeam = true;
+            by = 'NOMBRES'
+        } else if (by === 'DEPORTISTAS') {
+            byAthlete = true
+            by = 'NOMBRES'
+        } else {
+            by = 'NOMBRES'
+        }
+    }
+
+
     /** Solo puede recibir ASC o DESC **/
     await Deportista.findAll({
         attributes: ['matricula', 'nombres', 'apellido_paterno', 'apellido_materno', 'isCaptain', 'isActive', 'agno_debut', 'estado_id'],
