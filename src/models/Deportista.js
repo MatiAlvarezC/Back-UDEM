@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 
 const Deportista = DB.define('deportista', {
     matricula: {
-        type: Sequelize.STRING(20),
+        type: Sequelize.BIGINT,
         primaryKey: true,
         allowNull: false
     },

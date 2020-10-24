@@ -2,6 +2,8 @@ const Tipo_Sangre = require("../models/Tipo_Sangre");
 const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
 const Estado = require("../models/Estado");
+const Deporte = require("../models/Deporte");
+const Genero = require("../models/Genero");
 
 /**
  * ESTE ARCHIVO Y SCRIPT SE USARÁ SOLO EN FASE DE DESARROLLO.
@@ -35,5 +37,14 @@ let x = 0
 estado.forEach(status => {
     Estado.create({nombre: status, isAvailable: isAvailable[x], isActive: Status})
     x++
+})
+let deportes = ["Futbol", "Tenis", "Rugby", "Volleyball", "Sumo", "Futbol Rapido", "Basketball"]
+let isActive = true
+deportes.forEach(sport => {
+    Deporte.create({nombre: sport, isActive})
+})
+let genero = ["Masculino", "Femenino", "Mixto", "Funao", "Apache", "Jedi", "M1 Abrams"]
+genero.forEach(gen => {
+    Genero.create({nombre: gen})
 })
 
