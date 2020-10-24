@@ -38,6 +38,14 @@ const Datos_Medicos = DB.define('datos_medicos', {
     cirugias_previas: {
         type: Sequelize.STRING(50),
         allowNull: true
+    },
+    tipo_sangre: {
+        type: Sequelize.STRING(3),
+        allowNull: false
+    },
+    seguro_src: {
+        type: Sequelize.STRING(255),
+        allowNull: true
     }
 })
 

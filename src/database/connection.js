@@ -5,7 +5,7 @@ dotenv.config();
 const DB = new Sequelize(process.env.BBDD, process.env.USUARIOBBDD, process.env.PASSWORDBBDD, {
     dialect: 'mssql',
     host: process.env.HOST,
-    port: '5432',
+    port: process.env.HOST_PORT,
     define: {
         timestamps: false,            /** Desactiva la creación de atributos/columnas createdAt y updatedAt en las tablas **/
         freezeTableName: true,        /** Desactiva la creación de tablas en plural **/

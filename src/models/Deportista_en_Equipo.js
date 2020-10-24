@@ -17,6 +17,11 @@ const Deportista_en_Equipo = DB.define('deportista_en_equipo', {
     numero: {
         type: Sequelize.TINYINT,
         allowNull: true
+    },
+    isCaptain: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        field: 'isCaptain'
     }
 })
 

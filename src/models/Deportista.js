@@ -23,11 +23,11 @@ const Deportista = DB.define('deportista', {
         type: Sequelize.DATEONLY,
         allowNull: false
     },
-    altura: {
+    altura_m: {
         type: Sequelize.FLOAT,
         allowNull: true
     },
-    peso: {
+    peso_kg: {
         type: Sequelize.FLOAT,
         allowNull: true
     },
@@ -52,15 +52,14 @@ const Deportista = DB.define('deportista', {
         type: Sequelize.SMALLINT,
         allowNull: false
     },
-    isCaptain: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        field: 'isCaptain'
-    },
     isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         field: 'isActive'
+    },
+    foto_src: {
+        type: Sequelize.STRING(255),
+        allowNull: true
     }
 })
 

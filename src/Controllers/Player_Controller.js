@@ -1,6 +1,5 @@
 const Datos_Medicos = require("../models/Datos_Medicos");
 const Deportista = require("../models/Deportista");
-const Tipo_Sangre = require("../models/Tipo_Sangre");
 const Estado = require("../models/Estado");
 const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
@@ -75,9 +74,7 @@ const getById = async (req, res) => {
                     model: Estado
                 },
                 {
-                    model: Datos_Medicos, include: {
-                        model: Tipo_Sangre
-                    }
+                    model: Datos_Medicos
                 }
             ]
         })

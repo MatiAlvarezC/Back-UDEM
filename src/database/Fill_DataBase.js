@@ -1,7 +1,7 @@
-const Tipo_Sangre = require("../models/Tipo_Sangre");
 const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
 const Estado = require("../models/Estado");
+const Genero = require("../models/Genero");
 
 /**
  * ESTE ARCHIVO Y SCRIPT SE USARÁ SOLO EN FASE DE DESARROLLO.
@@ -17,13 +17,9 @@ const Estado = require("../models/Estado");
 
 let Status = true
 
-let sangre = ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"]
-sangre.forEach(blood => {
-    Tipo_Sangre.create({nombre: blood})
-})
 let genero = ["Masculino", "Femenino", "Mixto"]
 genero.forEach(genero => {
-    Tipo_Sangre.create({nombre: genero})
+    Genero.create({nombre: genero})
 })
 let campus = ["Providencia", "El Llano", "Talca", "Temuco"]
 campus.forEach(camp => {

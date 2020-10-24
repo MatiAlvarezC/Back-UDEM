@@ -4,7 +4,6 @@ const Programa = require("../Programa")
 const Campus = require("../Campus")
 const Deportista_en_Equipo = require("../Deportista_en_Equipo")
 const Estado = require("../Estado")
-const Tipo_Sangre = require("../Tipo_Sangre")
 const Equipo = require("../Equipo")
 const Deporte = require("../Deporte")
 const Genero = require("../Genero")
@@ -28,9 +27,6 @@ Deportista.belongsTo(Campus, {foreignKey: {name: 'campus_id'}})
 
 Datos_Medicos.hasOne(Deportista, {foreignKey: {name: 'datos_medicos_numero_poliza'}})
 Deportista.belongsTo(Datos_Medicos, {foreignKey: {name: 'datos_medicos_numero_poliza'}})
-
-Tipo_Sangre.hasMany(Datos_Medicos, {foreignKey: {name: 'tipo_sangre_id'}})
-Datos_Medicos.belongsTo(Tipo_Sangre, {foreignKey: {name: 'tipo_sangre_id'}})
 
 Deporte.hasMany(Equipo, {foreignKey: {name: 'deporte_id'}})
 Equipo.belongsTo(Deporte, {foreignKey: {name: 'deporte_id'}})
