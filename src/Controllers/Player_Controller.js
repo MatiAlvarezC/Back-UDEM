@@ -11,7 +11,6 @@ const create = async (req, res) => {
         const {
             matricula,
             correo,
-            datos_medicos_numero_poliza,
             numero_poliza,
         } = req.body
 
@@ -20,7 +19,7 @@ const create = async (req, res) => {
                 [Op.or]: [
                     {matricula},
                     {correo},
-                    {datos_medicos_numero_poliza}
+                    {datos_medicos_numero_poliza: numero_poliza}
                 ]
             }
         })
