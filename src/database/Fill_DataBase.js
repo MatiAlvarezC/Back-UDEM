@@ -1,7 +1,6 @@
 const Campus = require("../models/Campus");
 const Programa = require("../models/Programa");
 const Estado = require("../models/Estado");
-const Genero = require("../models/Genero");
 
 /**
  * ESTE ARCHIVO Y SCRIPT SE USARÁ SOLO EN FASE DE DESARROLLO.
@@ -17,10 +16,6 @@ const Genero = require("../models/Genero");
 
 let Status = true
 
-let genero = ["Masculino", "Femenino", "Mixto"]
-genero.forEach(genero => {
-    Genero.create({nombre: genero})
-})
 let campus = ["Providencia", "El Llano", "Talca", "Temuco"]
 campus.forEach(camp => {
     Campus.create({nombre: camp, isActive: Status})

@@ -6,7 +6,6 @@ const Deportista_en_Equipo = require("../Deportista_en_Equipo")
 const Estado = require("../Estado")
 const Equipo = require("../Equipo")
 const Deporte = require("../Deporte")
-const Genero = require("../Genero")
 const Usuario_en_Equipo = require("../Usuario_en_Equipo")
 const Usuario = require("../Usuario")
 
@@ -30,9 +29,6 @@ Deportista.belongsTo(Datos_Medicos, {foreignKey: {name: 'datos_medicos_numero_po
 
 Deporte.hasMany(Equipo, {foreignKey: {name: 'deporte_id'}})
 Equipo.belongsTo(Deporte, {foreignKey: {name: 'deporte_id'}})
-
-Genero.hasMany(Equipo, {foreignKey: {name: 'genero_id'}})
-Equipo.belongsTo(Genero, {foreignKey: {name: 'genero_id'}})
 
 Equipo.belongsToMany(Deportista, {through: Deportista_en_Equipo, foreignKey: {name: 'equipo_id'}})
 Deportista.belongsToMany(Equipo, {through: Deportista_en_Equipo, foreignKey: {name: 'deportista_matricula'}})
