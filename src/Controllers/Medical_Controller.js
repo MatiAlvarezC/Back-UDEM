@@ -2,7 +2,7 @@ const { model } = require('../database/connection')
 const Datos_Medicos = require('../models/Datos_Medicos')
 const Deportista = require('../models/Deportista')
 
-const getAll = async (req, res) => {
+const getPoliciesByExpiration = async (req, res) => {
     try {
         const datosMedicos = await Datos_Medicos.findAll({
             attributes: ['numero_poliza', 'vigencia_poliza', 'dias_restantes'],
@@ -34,5 +34,5 @@ const getAll = async (req, res) => {
 }
 
 module.exports = {
-    getAll
+    getPoliciesByExpiration
 }

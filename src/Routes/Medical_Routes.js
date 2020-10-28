@@ -2,6 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Medical_C = require('../Controllers/Medical_Controller')
 
-router.get('/getAll',Medical_C.getAll)
+router.get('/getPoliciesByExpiration',Medical_C.getPoliciesByExpiration)
 
 module.exports = router
