@@ -42,8 +42,10 @@ const Datos_Medicos = DB.define('datos_medicos', {
     dias_restantes: {
         type: Sequelize.VIRTUAL,
         get: function() {
-            const diferenciaTiempo = new Date(this.vigencia_poliza) - Date.now()
-            const diferenciaDias = Math.trunc(diferenciaTiempo / (1000 * 3600 * 24)) + 2
+            const hoyAux = new Date()
+            const hoy = new Date(hoyAux.getTime() - hoyAux.getTimezoneOffset() * 60000)
+            const diferenciaTiempo = new Date(this.vigencia_poliza) - hoy
+            const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24))
             return diferenciaDias
         }
     }
