@@ -6,6 +6,7 @@ const Campus_R = require('./Campus_Routes')
 const Program_R = require('./Program_Routes')
 const Blood_R = require('./Blood_Routes')
 const Team_R = require('./Team_Routes')
+const Medical_R = require('./Medical_Routes')
 
 require("../models/Relations/Relations")
 
@@ -18,4 +19,5 @@ module.exports = (app) => {
     app.use('/status',Status_R)
     app.use('/blood',Blood_R)
     app.use('/team', Team_R)
+    app.use('/medical', Medical_R)
 }

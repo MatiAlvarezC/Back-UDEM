@@ -26,7 +26,7 @@ Deportista.belongsTo(Programa, {foreignKey: {name: 'programa_id'}})
 Campus.hasMany(Deportista, {foreignKey: {name: 'campus_id'}})
 Deportista.belongsTo(Campus, {foreignKey: {name: 'campus_id'}})
 
-Datos_Medicos.hasOne(Deportista, {foreignKey: {name: 'datos_medicos_numero_poliza'}})
+Datos_Medicos.hasOne(Deportista, {foreignKey: {name: 'datos_medicos_numero_poliza'}, as: "deportista"})
 Deportista.belongsTo(Datos_Medicos, {foreignKey: {name: 'datos_medicos_numero_poliza'}})
 
 Tipo_Sangre.hasMany(Datos_Medicos, {foreignKey: {name: 'tipo_sangre_id'}})

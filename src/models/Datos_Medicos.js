@@ -38,6 +38,16 @@ const Datos_Medicos = DB.define('datos_medicos', {
     cirugias_previas: {
         type: Sequelize.STRING(50),
         allowNull: true
+    },
+    dias_restantes: {
+        type: Sequelize.VIRTUAL,
+        get: function() {
+            const hoyAux = new Date()
+            const hoy = new Date(hoyAux.getTime() - hoyAux.getTimezoneOffset() * 60000)
+            const diferenciaTiempo = new Date(this.vigencia_poliza) - hoy
+            const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24))
+            return diferenciaDias
+        }
     }
 })
 
