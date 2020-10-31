@@ -304,9 +304,16 @@ const getMaxPagesForCoaches = async (req, res) => {
             include: [
                 {
                     model: Equipo,
-                    where: {
-                        id: req.params.id
-                    }
+                    required: true,
+                    include: [
+                        {
+                            model: Deporte,
+                            required: true,
+                            where: {
+                                id: req.params.id
+                            }
+                        }
+                    ]
                 }
             ]
         });
@@ -322,8 +329,7 @@ const getCoachesByPage = async (req, res) => {
 
         let page = req.params.page
         const from = ((page <= 0 ? 1 : page) - 1) * coachesPerPage
-
-        const userIds = await Equipo.findAll({
+        const userIds = await Deporte.findAll({
             offset: from,
             limit: itemsPerPage,
             attributes: ['id'],
@@ -332,26 +338,37 @@ const getCoachesByPage = async (req, res) => {
             },
             include: [
                 {
-                    model: Usuario,
+                    model: Equipo,
                     required: true,
                     attributes: [
-                        'nomina',
-                        'nombres',
-                        'apellido_paterno',
-                        'apellido_materno',
-                        'celular',
-                        'correo',
-                        'puesto',
-                        'isActive'
+                        'id',
+                        'nombre',
                     ],
-                    where: {
-                        [Op.not]: [
-                            {isAdmin: [true]}
-                        ]
-                    }
+                    include: [
+                        {
+                            model: Usuario,
+                            required: true,
+                            attributes: [
+                                'nomina',
+                                'nombres',
+                                'apellido_paterno',
+                                'apellido_materno',
+                                'celular',
+                                'correo',
+                                'puesto',
+                                'isActive'
+                            ],
+                            where: {
+                                [Op.not]: [
+                                    {isAdmin: [true]}
+                                ]
+                            }
+                        }
+                    ]
                 }
             ]
         });
+
         if (userIds.length === 0) {
             return res.sendStatus(404)
         }
