@@ -29,4 +29,3 @@ Player.belongsToMany(Team, {through: Team_Player, foreignKey: {name: 'playerRegi
 
 Team.belongsToMany(User, {through: Team_User, foreignKey: {name: 'teamId'}})
 User.belongsToMany(Team, {through: Team_User, foreignKey: {name: 'userPayrollNumber'}})
-

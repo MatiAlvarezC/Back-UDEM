@@ -1,6 +1,6 @@
-const Datos_Medicos = require('../models/Datos_Medicos')
-const Deportista = require('../models/Deportista')
-const Estado = require('../models/Estado')
+const Medical_Data = require('../Models/Medical_Data')
+const Player = require('../Models/Player')
+const Status = require('../Models/Status')
 const {Op} = require('sequelize')
 const itemsPerPage = 10
 const idIntercambio = 4
@@ -9,14 +9,13 @@ const idBajaAdmin   = 6
 
 const getMaxPages = async (req, res) => {
     try {
-        const items = await Datos_Medicos.count({
+        const items = await Medical_Data.count({
             include: {
-                model: Deportista,
+                model: Player,
                 required: true,
-                as: "deportista",
                 include: {
-                    model: Estado,
-                    attributes: ['nombre'],
+                    model: Status,
+                    attributes: ['name'],
                     where: {
                         [Op.not]: [
                             {id: [idIntercambio, idGraduado, idBajaAdmin]}
@@ -36,25 +35,24 @@ const getByPage = async (req, res) => {
     let {page} = req.params
     const from = ((page <= 0 ? 1 : page) - 1) * itemsPerPage
     try {
-        const datosMedicos = await Datos_Medicos.findAll({
-            attributes: ['numero_poliza', 'vigencia_poliza', 'dias_restantes'],
-            order: [['vigencia_poliza', 'ASC']],
+        const datosMedicos = await Medical_Data.findAll({
+            attributes: ['policyNumber', 'policyValidity'],
+            order: [['policyValidity', 'ASC']],
             offset: from,
             limit: itemsPerPage,
             include: [
                 {
-                    model: Deportista,
+                    model: Player,
                     required: true,
-                    as: "deportista",
                     attributes: [
-                        'matricula',
-                        'nombres',
-                        'apellido_paterno',
-                        'apellido_materno'
+                        'registrationNumber',
+                        'name',
+                        'paternalLastName',
+                        'maternalLastName'
                     ],
                     include: {
-                        model: Estado,
-                        attributes: ['nombre'],
+                        model: Status,
+                        attributes: ['name'],
                         where: {
                             [Op.not]: [
                                 {id: [idIntercambio, idGraduado, idBajaAdmin]}
