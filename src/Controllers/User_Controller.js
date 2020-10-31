@@ -13,30 +13,30 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const User = await User.findOne({where: {username: username}, attributes: {include: ['password']}})
+        const user = await User.findOne({where: {username: username}, attributes: {include: ['password']}})
 
-        if (!User) {
+        if (!user) {
             return res.sendStatus(401)
         }
 
-        if (User.failedLoginAttempts >= 5 && ((validator.toDate(Date()) - User.failedLoginTime) / 60000) <= 30) {
+        if (user.failedLoginAttempts >= 5 && ((validator.toDate(Date()) - User.failedLoginTime) / 60000) <= 30) {
             return res.status(401).send("Intento de sesión bloqueado")
         }
 
-        const pass = await bcrypt.compare(password, User.password)
+        const pass = await bcrypt.compare(password, user.password)
 
         if (!pass) {
-            await User.update({failedLoginAttempts: (User.failedLoginAttempts + 1), failedLoginTime: Date()})
+            await user.update({failedLoginAttempts: (User.failedLoginAttempts + 1), failedLoginTime: Date()})
 
             return res.sendStatus(401)
         }
 
-        await User.update({failedLoginAttempts: null, failedLoginTime: null})
+        await user.update({failedLoginAttempts: null, failedLoginTime: null})
 
         const payload = {
-            sub: User.username,
-            name: User.name,
-            isAdmin: User.isAdmin
+            sub: user.username,
+            name: user.name,
+            isAdmin: user.isAdmin
         }
 
         /*const expiresIn = 600*/ /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
