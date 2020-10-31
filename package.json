@@ -1,11 +1,11 @@
 {
-  "name": "Back-UDEM",
+  "name": "Back_UDEM",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "demon": "nodemon app.js",
-    "fill": "node src/database/Fill_DataBase.js",
+    "fill": "node src/Database/Fill_DataBase.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

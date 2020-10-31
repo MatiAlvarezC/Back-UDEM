@@ -1,4 +1,4 @@
-const Campus = require("../models/Campus");
+const Campus = require("../Models/Campus");
 
 
 const create = async (req, res) => {
