@@ -19,14 +19,14 @@ const login = async (req, res) => {
             return res.sendStatus(401)
         }
 
-        if (user.failedLoginAttempts >= 5 && ((validator.toDate(Date()) - User.failedLoginTime) / 60000) <= 30) {
+        if (user.failedLoginAttempts >= 5 && ((validator.toDate(Date()) - user.failedLoginTime) / 60000) <= 30) {
             return res.status(401).send("Intento de sesión bloqueado")
         }
 
         const pass = await bcrypt.compare(password, user.password)
 
         if (!pass) {
-            await user.update({failedLoginAttempts: (User.failedLoginAttempts + 1), failedLoginTime: Date()})
+            await user.update({failedLoginAttempts: (user.failedLoginAttempts + 1), failedLoginTime: Date()})
 
             return res.sendStatus(401)
         }
@@ -44,6 +44,7 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
+        console.log(e)
         return res.sendStatus(500)
     }
 }
