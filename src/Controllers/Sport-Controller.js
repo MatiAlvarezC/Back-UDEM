@@ -329,39 +329,33 @@ const getCoachesByPage = async (req, res) => {
 
         let page = req.params.page
         const from = ((page <= 0 ? 1 : page) - 1) * coachesPerPage
-        const userIds = await Deporte.findAll({
+        const userIds = await Usuario.findAll({
             offset: from,
-            limit: itemsPerPage,
-            attributes: ['id'],
+            limit: coachesPerPage,
+            attributes: [
+                'nomina',
+                'nombres',
+                'apellido_paterno',
+                'apellido_materno',
+                'celular',
+                'correo',
+                'puesto',
+                'isActive'
+            ],
             where: {
-                id: req.params.id
+                [Op.not]: [
+                    {isAdmin: [true]}
+                ]
             },
             include: [
                 {
                     model: Equipo,
-                    required: true,
-                    attributes: [
-                        'id',
-                        'nombre',
-                    ],
                     include: [
                         {
-                            model: Usuario,
+                            model: Deporte,
                             required: true,
-                            attributes: [
-                                'nomina',
-                                'nombres',
-                                'apellido_paterno',
-                                'apellido_materno',
-                                'celular',
-                                'correo',
-                                'puesto',
-                                'isActive'
-                            ],
                             where: {
-                                [Op.not]: [
-                                    {isAdmin: [true]}
-                                ]
+                                id: req.params.id
                             }
                         }
                     ]
@@ -375,7 +369,6 @@ const getCoachesByPage = async (req, res) => {
 
         return res.send(userIds)
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
