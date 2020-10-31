@@ -1,21 +1,21 @@
-const Deportista = require('../models/Deportista')
-const Equipo = require('../models/Equipo')
+const Player = require('../Models/Player')
+const Team = require('../Models/Team')
 
 /** ======= FUNCIONES CRUD ======= **/
 const create = async (req, res) => {
-    const {nombre, isActive, deporte_id, genero_id} = req.body
-    if (isActive == null || nombre == null || deporte_id == null || genero_id == null) {
+    const {name, isActive, sportId} = req.body
+    if (isActive == null || name == null || sportId == null) {
         return res.status(400).send({message: 'Uno de los campos esta vacío'})
     } else {
         try {
-            await Equipo.findOne({where: {nombre}}).then(result => {
+            await Team.findOne({where: {name}}).then(result => {
                 if (result !== null) {
                     throw Error('Equipo Existente')
                 } else {
-                    Equipo.create({
+                    Team.create({
                         ...req.body
-                    }).then(equipo => {
-                        return res.send(equipo)
+                    }).then(team => {
+                        return res.send(team)
                     })
                 }
             })
@@ -28,9 +28,9 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        await Equipo.update({
+        await Team.update({
             ...req.body
-        }, {where: {id: req.params.id}}).then(result => {
+        }, {where: {id: req.params.id}}).then(() => {
             return res.send({status: 'SUCCESS'})
         }).catch(e => {
             return res.status(400).send({message: e.message})
@@ -42,17 +42,17 @@ const update = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        await Equipo.findAll({
-            attributes: ['nombre', 'id', 'isActive'],
-            order: [['nombre', 'ASC']],
+        await Team.findAll({
+            attributes: ['name', 'id', 'isActive'],
+            order: [['name', 'ASC']],
             include: [
                 {
-                    model: Deportista,
-                    attributes: ['nombres'],
+                    model: Player,
+                    attributes: ['name'],
                 }
             ]
-        }).then(async EQUIPOS => {
-            return res.send(await getCounts(EQUIPOS))
+        }).then(async TEAMS => {
+            return res.send(await getCounts(TEAMS))
         })
     } catch (e) {
         return res.status(400).send({message: e.message})
@@ -61,11 +61,11 @@ const getAll = async (req, res) => {
 
 const getByID = (req, res) => {
     try {
-        Equipo.findByPk(req.params['id']).then(equipo => {
-            if (equipo == null) {
+        Team.findByPk(req.params['id']).then(team => {
+            if (team == null) {
                 return res.status(404).send({message: 'NOT_FOUND'})
             } else {
-                return res.send(equipo)
+                return res.send(team)
             }
         })
     } catch (e) {
@@ -74,20 +74,19 @@ const getByID = (req, res) => {
 }
 /** ======= FUNCIONES CRUD ======= **/
 
-async function getCounts(EQUIPOS) {
-    let equipos = new Array(0)
-    for (let i = 0; i < EQUIPOS.length; i++) {
-        await equipos.push({
-            id: EQUIPOS[i].id,
-            nombre: EQUIPOS[i].nombre,
-            isActive: EQUIPOS[i].isActive,
-            deporte_id: EQUIPOS[i].deporte_id,
-            genero_id: EQUIPOS[i].genero_id,
-            deportistas: EQUIPOS[i].deportista.length
+async function getCounts(TEAMS) {
+    let teams = new Array(0)
+    for (let i = 0; i < TEAMS.length; i++) {
+        await teams.push({
+            id: TEAMS[i].id,
+            nombre: TEAMS[i].nombre,
+            isActive: TEAMS[i].isActive,
+            sportId: TEAMS[i].sportId,
+            players: TEAMS[i].player.length
         })
         aux = 0;
     }
-    return equipos
+    return teams
 }
 
 module.exports = {

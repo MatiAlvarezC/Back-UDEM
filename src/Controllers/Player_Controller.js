@@ -1,10 +1,10 @@
-const Datos_Medicos = require("../models/Datos_Medicos");
-const Deportista = require("../models/Deportista");
-const Estado = require("../models/Estado");
-const Campus = require("../models/Campus");
-const Programa = require("../models/Programa");
-const Equipo = require("../models/Equipo");
-const Deporte = require("../models/Deporte");
+const Medical_Data = require("../Models/Medical_Data");
+const Player = require("../Models/Player");
+const Status = require("../Models/Status");
+const Campus = require("../Models/Campus");
+const Program = require("../Models/Program");
+const Team = require("../Models/Team");
+const Sport = require("../Models/Sport");
 const {Op} = require('sequelize')
 const itemsPerPage = 10;
 /** jugadores por pagina **/
@@ -12,43 +12,43 @@ const itemsPerPage = 10;
 const create = async (req, res) => {
     try {
         const {
-            matricula,
-            correo,
-            datos_medicos_numero_poliza,
-            numero_poliza,
+            registrationNumber,
+            email,
+            policyNumber,
         } = req.body
 
-        const player = await Deportista.findOne({
+        const player = await Player.findOne({
             where: {
                 [Op.or]: [
-                    {matricula},
-                    {correo},
-                    {datos_medicos_numero_poliza}
+                    {registrationNumber},
+                    {email},
+                    {medicalDataPolicyNumber: policyNumber}
                 ]
             }
         })
 
         if (player) {
-            if (player.matricula === matricula) {
-                return res.status(400).send(["Numero de matricula duplicado"])
-            } else if (player.correo === correo) {
-                return res.status(400).send(["Direccion de correo duplicada"])
-            } else if (player.datos_medicos_numero_poliza === numero_poliza) {
-                return res.status(400).send(["Numero de poliza duplicado"])
+            if (player.registrationNumber === registrationNumber) {
+                return res.status(400).send("Numero de matricula duplicado")
+            } else if (player.email === email) {
+                return res.status(400).send("Direccion de correo duplicada")
+            } else if (player.medicalDataPolicyNumber === policyNumber) {
+                return res.status(400).send("Numero de poliza duplicado")
             }
         }
 
-        const medical = await Datos_Medicos.findByPk(numero_poliza)
+        const medical = await Medical_Data.findByPk(policyNumber)
 
         if (medical) {
             return res.status(400).send("Numero de poliza duplicado")
         }
 
-        await Datos_Medicos.create({
+        await Medical_Data.create({
             ...req.body
         })
 
-        await Deportista.create({
+        await Player.create({
+            medicalDataPolicyNumber: policyNumber,
             ...req.body
         })
 
@@ -62,19 +62,19 @@ const create = async (req, res) => {
 const getById = async (req, res) => {
 
     try {
-        const player = await Deportista.findByPk(req.params.id, {
+        const player = await Player.findByPk(req.params.id, {
             include: [
                 {
-                    model: Programa
+                    model: Program
                 },
                 {
                     model: Campus
                 },
                 {
-                    model: Estado
+                    model: Status
                 },
                 {
-                    model: Datos_Medicos
+                    model: Medical_Data
                 }
             ]
         })
@@ -93,7 +93,7 @@ const getById = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const players = await Deportista.findAll()
+        const players = await Player.findAll()
 
         if (players.length === 0) {
             return res.sendStatus(404)
@@ -108,18 +108,18 @@ const getAll = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const {correo, numero_poliza} = req.body
+        const {email, policyNumber} = req.body
 
-        const player = await Deportista.findByPk(req.params.id)
+        const player = await Player.findByPk(req.params.id)
 
         if (!player) {
             return res.sendStatus(404)
         }
 
-        if (correo !== undefined) {
-            const player2 = await Deportista.findOne({
+        if (email !== undefined) {
+            const player2 = await Player.findOne({
                 where: {
-                    correo
+                    email
                 }
             })
 
@@ -128,10 +128,10 @@ const update = async (req, res) => {
             }
         }
 
-        if (numero_poliza !== undefined) {
-            const player3 = await Deportista.findOne({
+        if (policyNumber !== undefined) {
+            const player3 = await Player.findOne({
                 where: {
-                    datos_medicos_numero_poliza: numero_poliza
+                    medicalDataPolicyNumber: policyNumber
                 }
             })
 
@@ -140,9 +140,9 @@ const update = async (req, res) => {
             }
         }
 
-        const poliza = await Datos_Medicos.findByPk(player.datos_medicos_numero_poliza)
+        const policy = await Medical_Data.findByPk(player.medicalDataPolicyNumber)
 
-        await poliza.update({
+        await policy.update({
             ...req.body
         })
 
@@ -152,7 +152,6 @@ const update = async (req, res) => {
 
         return res.sendStatus(201)
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -160,27 +159,26 @@ const update = async (req, res) => {
 const assignToTeam = async (req, res) => {
     try {
         const {
-            equipo_id,
-            fecha_inicio,
-            fecha_salida,
-            posicion,
-            numero
+            teamId,
+            startDate,
+            endDate,
+            position,
+            number
         } = req.body
 
-        const player = await Deportista.findByPk(req.params.id)
-        const team = await Equipo.findByPk(equipo_id)
+        const player = await Player.findByPk(req.params.id)
+        const team = await Team.findByPk(teamId)
 
         player.addEquipo(team, {
             through: {
-                fecha_inicio,
-                fecha_salida,
-                posicion,
-                numero
+                startDate,
+                endDate,
+                position,
+                number
             }
         })
         return res.sendStatus(200)
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -190,7 +188,7 @@ const assignToTeam = async (req, res) => {
  * se mostraran los campos como "N/A" correspondientes al deporte
  **/
 const getByPage = async (req, res) => {
-    let deportistas = []
+    let players = []
     let {page, order, by} = req.params
     const from = (((page <= 0 ? 1 : page) - 1) * itemsPerPage);
     order = order.toUpperCase();
@@ -199,76 +197,76 @@ const getByPage = async (req, res) => {
     if (order !== 'ASC' && order !== 'DESC') {
         order = 'ASC'
     }
-    if (by !== 'NOMBRES' && by !== 'ISACTIVE') {
-        if (by === 'EQUIPOS') {
+    if (by !== 'NAME' && by !== 'ISACTIVE') {
+        if (by === 'TEAM') {
             byTeam = true;
-            by = 'NOMBRES'
-        } else if (by === 'DEPORTISTAS') {
+            by = 'NAME'
+        } else if (by === 'PLAYERS') {
             byAthlete = true
-            by = 'NOMBRES'
+            by = 'NAME'
         } else {
-            by = 'NOMBRES'
+            by = 'NAME'
         }
     }
 
 
     /** Solo puede recibir ASC o DESC **/
-    await Deportista.findAll({
-        attributes: ['matricula', 'nombres', 'apellido_paterno', 'apellido_materno', 'isCaptain', 'isActive', 'agno_debut', 'estado_id'],
+    await Player.findAll({
+        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isCaptain', 'isActive', 'debutYear', 'statusId'],
         order: [[by, order]],
         //limit: 1000,
         include: [
             {
-                model: Equipo,
-                attributes: ['id', 'nombre'],
+                model: Team,
+                attributes: ['id', 'name'],
                 include: [
                     {
-                        model: Deporte,
-                        attributes: ['id', 'nombre'],
+                        model: Sport,
+                        attributes: ['id', 'namee'],
                     }
                 ]
             },
         ]
-    }).then(async Deportistas => {
-        Deportistas.map(async depo => {
-            if (depo.equipos[0] === undefined) {
+    }).then(async Players => {
+        Players.map(async player => {
+            if (player.teams[0] === undefined) {
                 console.log('test')
-                await deportistas.push({
-                    matricula: depo.matricula,
-                    nombres: depo.nombres,
-                    apellido_paterno: depo.apellido_paterno,
-                    apellido_materno: depo.apellido_materno,
-                    isCaptain: depo.isCaptain,
-                    isActive: depo.isActive,
-                    agno_debut: depo.agno_debut,
-                    equipos: [{
-                        deporte: {nombre: 'N/A'},
-                        deportista_en_equipo: {
-                            fecha_inicio: "N/A",
-                            fecha_salida: "N/A",
+                await players.push({
+                    registrationNumber: player.registrationNumber,
+                    name: player.name,
+                    paternalLastName: player.paternalLastName,
+                    maternalLastName: player.maternalLastName,
+                    isCaptain: player.isCaptain,
+                    isActive: player.isActive,
+                    debutYear: player.debutYear,
+                    teams: [{
+                        sport: {name: 'N/A'},
+                        teamPlayer: {
+                            startDate: "N/A",
+                            endDate: "N/A",
                         }
                     }]
                 })
             } else {
-                await deportistas.push({
-                    matricula: depo.matricula,
-                    nombres: depo.nombres,
-                    apellido_paterno: depo.apellido_paterno,
-                    apellido_materno: depo.apellido_materno,
-                    isCaptain: depo.isCaptain,
-                    isActive: depo.isActive,
-                    agno_debut: depo.agno_debut,
-                    equipos: [{
-                        deporte: {nombre: depo.equipos[depo.equipos.length - 1].deporte.nombre},
-                        deportista_en_equipo: {
-                            fecha_inicio: depo.equipos[depo.equipos.length - 1].deportista_en_equipo.fecha_inicio,
-                            fecha_salida: depo.equipos[depo.equipos.length - 1].deportista_en_equipo.fecha_salida
+                await players.push({
+                    registrationNumber: player.registrationNumber,
+                    name: player.name,
+                    paternalLastName: player.paternalLastName,
+                    maternalLastName: player.maternalLastName,
+                    isCaptain: player.isCaptain,
+                    isActive: player.isActive,
+                    debutYear: player.debutYear,
+                    teams: [{
+                        sport: {name: player.teams[player.teams.length - 1].sport.name},
+                        teamPlayer: {
+                            startDate: player.teams[player.teams.length - 1].teamPlayer.startDate,
+                            endDate: player.teams[player.teams.length - 1].teamPlayer.endDate
                         }
                     }]
                 })
             }
         })
-        return res.send(deportistas.slice(from, from + itemsPerPage))
+        return res.send(players.slice(from, from + itemsPerPage))
     }).catch(e => {
         return res.send({message: e.message})
     })
@@ -276,7 +274,7 @@ const getByPage = async (req, res) => {
 
 const getMaxPages = async (req, res) => {
     try {
-        const items = await Deportista.count();
+        const items = await Player.count();
         const maxPages = Math.ceil(items / itemsPerPage); // 2
         return res.send({pages: maxPages})
     } catch (e) {

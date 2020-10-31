@@ -1,5 +1,5 @@
 const express = require('express');
-const Sport_C = require('../Controllers/Sport-Controller')
+const Sport_C = require('../Controllers/Sport_Controller')
 const router = express.Router();
 const { isAuth } = require('../Middlewares/Auth')
 const { isAdmin } = require('../Middlewares/Admin')

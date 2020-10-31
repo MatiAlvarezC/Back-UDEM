@@ -1,20 +1,21 @@
-const DB = require("../database/connection")
+const DB = require("../Database/Connection")
 const Sequelize = require('sequelize')
 
-const Equipo = DB.define('equipo', {
+const Sport = DB.define('sport', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    nombre: {
-        type: Sequelize.STRING(50),
+    name: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    genero: {
-        type: Sequelize.STRING(20),
-        allowNull: false
+    src: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: "default.svg"
     },
     isActive: {
         type: Sequelize.BOOLEAN,
@@ -23,4 +24,4 @@ const Equipo = DB.define('equipo', {
     }
 })
 
-module.exports = Equipo
+module.exports = Sport

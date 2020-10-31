@@ -1,9 +1,10 @@
 const {Op} = require('sequelize')
-const Usuario = require("../models/Usuario")
-const Equipo = require("../models/Equipo")
-const Usuario_en_Equipo = require("../models/Usuario_en_Equipo")
+const User = require("../Models/User")
+const Team = require("../Models/Team")
+const TeamUser = require("../Models/Team_User")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const validator = require('validator')
 
 const login = async (req, res) => {
     try {
@@ -12,21 +13,29 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const User = await Usuario.findOne({where: {username: username}, attributes: {include: ['password']}})
+        const User = await User.findOne({where: {username: username}, attributes: {include: ['password']}})
 
         if (!User) {
             return res.sendStatus(401)
         }
 
+        if (User.failedLoginAttempts >= 5 && ((validator.toDate(Date()) - User.failedLoginTime) / 60000) <= 30) {
+            return res.status(401).send("Intento de sesión bloqueado")
+        }
+
         const pass = await bcrypt.compare(password, User.password)
 
         if (!pass) {
+            await User.update({failedLoginAttempts: (User.failedLoginAttempts + 1), failedLoginTime: Date()})
+
             return res.sendStatus(401)
         }
 
+        await User.update({failedLoginAttempts: null, failedLoginTime: null})
+
         const payload = {
             sub: User.username,
-            name: User.nombres,
+            name: User.name,
             isAdmin: User.isAdmin
         }
 
@@ -41,34 +50,34 @@ const login = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        let password, username
+        let hash, username
         const {
-            nomina,
-            nombres,
-            apellido_paterno,
-            correo,
+            payrollNumber,
+            name,
+            paternalLastName,
+            email,
         } = req.body
 
-        password = await nomina.slice(0, 4);
-        password = await bcrypt.hash(password, 10)
+        hash = await payrollNumber.slice(0, 4);
+        hash = await bcrypt.hash(hash, 10)
 
         let x = 1;
-        let name = nombres.slice(0, 1)
+        let names = name.slice(0, 1)
         let counter = 0
 
         do {
-            username = ((name.concat(apellido_paterno)).concat((x.toString()).padStart(2, 0))).toLowerCase()
+            username = ((names.concat(paternalLastName)).concat((x.toString()).padStart(2, 0))).toLowerCase()
             /**
              * Este conjunto de funciones se encarga de generar el username compuesto de la primera silaba del primer
              * nombre, el apellido paterno completo y un numero que parte desde el "01".
              */
 
-            const user = await Usuario.findOne({
+            const user = await User.findOne({
                 where: {
                     [Op.or]: [
                         {username},
-                        {nomina},
-                        (correo !== null ? {correo} : {})
+                        {payrollNumber},
+                        (email !== null ? {email} : {})
                     ]
                 }
             })
@@ -76,9 +85,9 @@ const create = async (req, res) => {
             if (user) {
                 if (username === user.username) {
                     x++
-                } else if (correo === user.correo) {
+                } else if (email === user.email) {
                     return res.status(400).send("Direccion de Correo Duplicada")
-                } else if (nomina === user.nomina) {
+                } else if (payrollNumber === user.payrollNumber) {
                     return res.status(400).send("Nomina Duplicada")
                 }
             } else {
@@ -86,9 +95,9 @@ const create = async (req, res) => {
             }
         } while (counter === 0)
 
-        await Usuario.create({
+        await User.create({
             username,
-            password,
+            password: hash,
             ...req.body
         })
 
@@ -101,9 +110,9 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const Users = await Usuario.findAll({
+        const Users = await User.findAll({
             include: {
-                model: Equipo
+                model: Team
             }
         })
 
@@ -120,7 +129,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
     try {
-        const user = await Usuario.findByPk(req.params.id)
+        const user = await User.findByPk(req.params.id)
 
         if (!user) {
             return res.sendStatus(404)
@@ -135,18 +144,18 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const {correo} = req.body
+        const {email} = req.body
 
-        const user = await Usuario.findByPk(req.params.id)
+        const user = await User.findByPk(req.params.id)
 
         if (!user) {
             return res.sendStatus(404)
         }
 
-        if (correo !== undefined) {
-            const user2 = await Usuario.findOne({
+        if (email !== undefined) {
+            const user2 = await User.findOne({
                 where: {
-                    correo
+                    email
                 }
             })
 
@@ -167,17 +176,10 @@ const update = async (req, res) => {
     }
 }
 
-const get_user_login = async (req, res) => {
-    const usuario = await Usuario.findByPk(req.params.id, {
-        attributes: ['nombres', 'apellido_paterno', 'apellido_materno', 'isAdmin', 'isActive']
-    });
-    return res.send(usuario)
-}
-
 const assignToTeam = async (req, res) => {
     try {
-        const user = await Usuario.findByPk(req.params.id)
-        const team = await Equipo.findByPk(req.body.equipo_id)
+        const user = await User.findByPk(req.params.id)
+        const team = await Team.findByPk(req.body.equipo_id)
         user.addEquipo(team)
         return res.sendStatus(200)
     } catch (e) {
@@ -187,12 +189,12 @@ const assignToTeam = async (req, res) => {
 
 const getAssignedTeamsIds = async (req, res) => {
     try {
-        const teamIds = await Usuario_en_Equipo.findAll({
+        const teamIds = await TeamUser.findAll({
             where: {
-                usuario_nomina: req.params.id
+                userPayrollNumber: req.params.id
             },
             attributes: [
-                'equipo_id'
+                'teamId'
             ]
         });
         return res.send(teamIds)
@@ -207,7 +209,6 @@ module.exports = {
     getAll,
     getById,
     update,
-    get_user_login,
     assignToTeam,
     getAssignedTeamsIds
 }

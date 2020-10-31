@@ -6,7 +6,7 @@ const Campus_R = require('./Campus_Routes')
 const Program_R = require('./Program_Routes')
 const Team_R = require('./Team_Routes')
 
-require("../models/Relations/Relations")
+require("../Models/Relations/Relations")
 
 module.exports = (app) => {
     app.use('/user', User_R);

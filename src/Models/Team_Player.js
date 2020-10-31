@@ -1,21 +1,21 @@
-const DB = require("../database/connection")
+const DB = require("../Database/Connection")
 const Sequelize = require('sequelize')
 
-const Deportista_en_Equipo = DB.define('deportista_en_equipo', {
-    fecha_inicio: {
+const Team_Player = DB.define('teamPlayer', {
+    startDate: {
         type: Sequelize.DATEONLY,
         allowNull: false,
     },
-    fecha_salida: {
+    endDate: {
         type: Sequelize.DATEONLY,
         allowNull: true
     },
-    posicion: {
-        type: Sequelize.STRING(30),
+    position: {
+        type: Sequelize.STRING,
         allowNull: true
     },
-    numero: {
-        type: Sequelize.TINYINT,
+    number: {
+        type: Sequelize.INTEGER,
         allowNull: true
     },
     isCaptain: {
@@ -25,4 +25,4 @@ const Deportista_en_Equipo = DB.define('deportista_en_equipo', {
     }
 })
 
-module.exports = Deportista_en_Equipo
+module.exports = Team_Player

@@ -1,54 +1,54 @@
-const DB = require("../database/connection")
+const DB = require("../Database/Connection")
 const Sequelize = require('sequelize')
 
-const Deportista = DB.define('deportista', {
-    matricula: {
-        type: Sequelize.STRING(20),
+const Player = DB.define('player', {
+    registrationNumber: {
+        type: Sequelize.INTEGER,
         primaryKey: true,
         allowNull: false
     },
-    nombres: {
-        type: Sequelize.STRING(50),
+    name: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    apellido_paterno: {
-        type: Sequelize.STRING(30),
+    paternalLastName: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    apellido_materno: {
-        type: Sequelize.STRING(30),
+    maternalLastName: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    fecha_nacimiento: {
+    birthdate: {
         type: Sequelize.DATEONLY,
         allowNull: false
     },
-    altura_m: {
-        type: Sequelize.FLOAT,
+    heightM: {
+        type: Sequelize.STRING,
         allowNull: true
     },
-    peso_kg: {
-        type: Sequelize.FLOAT,
+    weightKg: {
+        type: Sequelize.STRING,
         allowNull: true
     },
-    celular: {
+    phone: {
         type: Sequelize.BIGINT,
         allowNull: false
     },
-    correo: {
-        type: Sequelize.STRING(50),
+    email: {
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true
     },
-    talla_camisa: {
-        type: Sequelize.STRING(5),
+    shirtSize: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    talla_short: {
-        type: Sequelize.STRING(5),
+    shortSize: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    agno_debut: {
+    debutYear: {
         type: Sequelize.SMALLINT,
         allowNull: false
     },
@@ -57,10 +57,10 @@ const Deportista = DB.define('deportista', {
         allowNull: false,
         field: 'isActive'
     },
-    foto_src: {
-        type: Sequelize.STRING(255),
+    src: {
+        type: Sequelize.STRING,
         allowNull: true
     }
 })
 
-module.exports = Deportista
+module.exports = Player
