@@ -2,7 +2,9 @@ const Sport = require('../Models/Sport')
 const Team = require('../Models/Team')
 const Player = require('../Models/Player')
 const User = require('../Models/User')
+const {Op} = require('sequelize')
 const itemsPerPage = 6; /** deportes por pagina **/
+const coachesPerPage = 6;
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
 /**
@@ -290,11 +292,93 @@ const getByID = (req, res) => {
     }
 }
 
+const getMaxPagesForCoaches = async (req, res) => {
+    try {
+        const items = await User.count( {
+            where: {
+                [Op.not]: [
+                    {isAdmin: [true]}
+                ]
+            },
+            include: [
+                {
+                    model: Team,
+                    required: true,
+                    include: [
+                        {
+                            model: Sport,
+                            required: true,
+                            where: {
+                                id: req.params.id
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
+        const maxPages = Math.ceil(items / coachesPerPage); // 2
+        return res.send({pages: maxPages})
+    } catch (e) {
+        return res.status(500).send({message: 'INTERNAL_ERROR'})
+    }
+}
+
+const getCoachesByPage = async (req, res) => {
+    try {
+
+        let page = req.params.page
+        const from = ((page <= 0 ? 1 : page) - 1) * coachesPerPage
+        const userIds = await Usuario.findAll({
+            offset: from,
+            limit: coachesPerPage,
+            attributes: [
+                'payrollNumber',
+                'name',
+                'paternalLastName',
+                'maternalLastName',
+                'phone',
+                'email',
+                'occupation',
+                'isActive'
+            ],
+            where: {
+                [Op.not]: [
+                    {isAdmin: [true]}
+                ]
+            },
+            include: [
+                {
+                    model: Team,
+                    include: [
+                        {
+                            model: Sport,
+                            required: true,
+                            where: {
+                                id: req.params.id
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        if (userIds.length === 0) {
+            return res.sendStatus(404)
+        }
+
+        return res.send(userIds)
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     create,
     update,
     getAll,
     getByID,
     getByPage,
-    getMaxPages
+    getMaxPages,
+    getCoachesByPage,
+    getMaxPagesForCoaches
 }
