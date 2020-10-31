@@ -339,6 +339,10 @@ const getCoachesByPage = async (req, res) => {
                         'nombres',
                         'apellido_paterno',
                         'apellido_materno',
+                        'celular',
+                        'correo',
+                        'puesto',
+                        'isActive'
                     ],
                     where: {
                         [Op.not]: [
