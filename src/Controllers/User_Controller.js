@@ -17,7 +17,6 @@ const login = async (req, res) => {
         if (!User) {
             return res.sendStatus(401)
         }
-
         const pass = await bcrypt.compare(password, User.password)
 
         if (!pass) {
@@ -169,7 +168,7 @@ const update = async (req, res) => {
 
 const get_user_login = async (req, res) => {
     const usuario = await Usuario.findByPk(req.params.id, {
-        attributes: ['nombres', 'apellido_paterno', 'apellido_materno', 'isAdmin', 'isActive']
+        attributes: ['nombres', 'apellido_paterno', 'apellido_materno', 'isAdmin', 'isActive', 'username', 'password']
     });
     return res.send(usuario)
 }

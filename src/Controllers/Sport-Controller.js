@@ -1,8 +1,10 @@
+const {Op} = require('sequelize')
 const Deporte = require('../models/Deporte')
 const Equipo = require('../models/Equipo')
 const Deportista = require('../models/Deportista')
 const Usuario = require('../models/Usuario')
 const itemsPerPage = 6; /** deportes por pagina **/
+const coachesPerPage = 6;
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
 /**
@@ -291,11 +293,79 @@ const getByID = (req, res) => {
     }
 }
 
+const getMaxPagesForCoaches = async (req, res) => {
+    try {
+        const items = await Usuario.count( {
+            where: {
+                [Op.not]: [
+                    {isAdmin: [true]}
+                ]
+            },
+            include: [
+                {
+                    model: Equipo,
+                    where: {
+                        id: req.params.id
+                    }
+                }
+            ]
+        });
+        const maxPages = Math.ceil(items / coachesPerPage); // 2
+        return res.send({pages: maxPages})
+    } catch (e) {
+        return res.status(500).send({message: 'INTERNAL_ERROR'})
+    }
+}
+
+const getCoachesByPage = async (req, res) => {
+    try {
+
+        let page = req.params.page
+        const from = ((page <= 0 ? 1 : page) - 1) * coachesPerPage
+
+        const userIds = await Equipo.findAll({
+            offset: from,
+            limit: itemsPerPage,
+            attributes: ['id'],
+            where: {
+                id: req.params.id
+            },
+            include: [
+                {
+                    model: Usuario,
+                    required: true,
+                    attributes: [
+                        'nomina',
+                        'nombres',
+                        'apellido_paterno',
+                        'apellido_materno',
+                    ],
+                    where: {
+                        [Op.not]: [
+                            {isAdmin: [true]}
+                        ]
+                    }
+                }
+            ]
+        });
+        if (userIds.length === 0) {
+            return res.sendStatus(404)
+        }
+
+        return res.send(userIds)
+    } catch (e) {
+        console.log(e)
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     create,
     update,
     getAll,
     getByID,
     getByPage,
-    getMaxPages
+    getMaxPages,
+    getCoachesByPage,
+    getMaxPagesForCoaches
 }
