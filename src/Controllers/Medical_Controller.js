@@ -36,7 +36,7 @@ const getByPage = async (req, res) => {
     const from = ((page <= 0 ? 1 : page) - 1) * itemsPerPage
     try {
         const datosMedicos = await Medical_Data.findAll({
-            attributes: ['policyNumber', 'policyValidity'],
+            attributes: ['policyNumber', 'policyValidity', 'remainingDays'],
             order: [['policyValidity', 'ASC']],
             offset: from,
             limit: itemsPerPage,

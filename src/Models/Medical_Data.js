@@ -46,7 +46,17 @@ const Medical_Data = DB.define('medicalData', {
     src: {
         type: Sequelize.STRING,
         allowNull: true
+    },
+    remainingDays: {
+        type: Sequelize.VIRTUAL,
+        get: () => {
+            const aux = new Date()
+            const today = new Date(aux.getTime() - aux.getTimezoneOffset() * 60000)
+            const timeDifference = new Date(this.policyValidity) - today
+            return Math.ceil(timeDifference / (1000 * 3600 * 24))
+        }
     }
+
 })
 
 module.exports = Medical_Data
