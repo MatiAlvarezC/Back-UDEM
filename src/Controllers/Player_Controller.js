@@ -212,17 +212,17 @@ const getByPage = async (req, res) => {
 
     /** Solo puede recibir ASC o DESC **/
     await Player.findAll({
-        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isCaptain', 'isActive', 'debutYear', 'statusId'],
+        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive', 'debutYear', 'statusId'],
         order: [[by, order]],
         //limit: 1000,
         include: [
             {
                 model: Team,
-                attributes: ['id', 'name'],
+                attributes: ['id', 'name',],
                 include: [
                     {
                         model: Sport,
-                        attributes: ['id', 'namee'],
+                        attributes: ['id', 'name'],
                     }
                 ]
             },
@@ -230,15 +230,15 @@ const getByPage = async (req, res) => {
     }).then(async Players => {
         Players.map(async player => {
             if (player.teams[0] === undefined) {
-                console.log('test')
+                console.log(player)
                 await players.push({
                     registrationNumber: player.registrationNumber,
                     name: player.name,
                     paternalLastName: player.paternalLastName,
                     maternalLastName: player.maternalLastName,
-                    isCaptain: player.isCaptain,
                     isActive: player.isActive,
                     debutYear: player.debutYear,
+                    statusId: player.statusId,
                     teams: [{
                         sport: {name: 'N/A'},
                         teamPlayer: {
@@ -256,11 +256,18 @@ const getByPage = async (req, res) => {
                     isCaptain: player.isCaptain,
                     isActive: player.isActive,
                     debutYear: player.debutYear,
+                    statusId: player.statusId,
                     teams: [{
-                        sport: {name: player.teams[player.teams.length - 1].sport.name},
+                        id: player.teams[player.teams.length - 1].id,
+                        name: player.teams[player.teams.length - 1].name,
+                        sport: {
+                            name: player.teams[player.teams.length - 1].sport.name,
+                            id: player.teams[player.teams.length - 1].sport.id
+                        },
                         teamPlayer: {
                             startDate: player.teams[player.teams.length - 1].teamPlayer.startDate,
-                            endDate: player.teams[player.teams.length - 1].teamPlayer.endDate
+                            endDate: player.teams[player.teams.length - 1].teamPlayer.endDate,
+                            isCaptain: player.teams[player.teams.length - 1].teamPlayer.isCaptain
                         }
                     }]
                 })

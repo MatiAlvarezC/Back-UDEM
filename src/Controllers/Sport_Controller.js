@@ -67,16 +67,16 @@ async function getCounts(SPORTS) {
     let aux = 0;
     let sports = new Array(0)
     for (let i = 0; i < SPORTS.length; i++) {
-        for (let j = 0; j < SPORTS[i].equipos.length; j++) {
-            aux += SPORTS[i].equipos[j].player.length /**CONTADOR DE JUGADORES POR EQUIPO**/
+        for (let j = 0; j < SPORTS[i].teams.length; j++) {
+            aux += SPORTS[i].teams[j].players.length /**CONTADOR DE JUGADORES POR EQUIPO**/
         }
         await sports.push({
             id: SPORTS[i].id,
-            nombre: SPORTS[i].nombre,
+            name: SPORTS[i].name,
             src: SPORTS[i].src,
             isActive: SPORTS[i].isActive,
-            equipos: SPORTS[i].equipos.length,
-            deportistas: aux
+            teams: SPORTS[i].teams.length,
+            players: aux
         })
         aux = 0;
     }
@@ -248,6 +248,7 @@ const getByPage = async (req, res) => {
         }
 
     } catch (e) {
+        console.log(e)
         return res.status(500).send({message: e.message})
     }
 }
@@ -272,7 +273,7 @@ const getByID = (req, res) => {
                 include: [
                     {
                         model: Player,
-                        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isCaptain', 'isActive', 'debutYear', 'statusId']
+                        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive', 'debutYear', 'statusId']
                     },
                     {
                         model: User,
