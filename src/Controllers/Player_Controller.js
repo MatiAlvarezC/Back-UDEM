@@ -82,7 +82,6 @@ const getById = async (req, res) => {
         if (!player) {
             return res.sendStatus(404)
         }
-        console.log(player)
 
         return res.send(player)
 
@@ -169,16 +168,19 @@ const assignToTeam = async (req, res) => {
         const player = await Player.findByPk(req.params.id)
         const team = await Team.findByPk(teamId)
 
-        player.addEquipo(team, {
+        await player.addTeam(team, {
             through: {
                 startDate,
                 endDate,
                 position,
-                number
+                number,
+                isCaptain: true
             }
         })
+
         return res.sendStatus(200)
     } catch (e) {
+        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -230,7 +232,6 @@ const getByPage = async (req, res) => {
     }).then(async Players => {
         Players.map(async player => {
             if (player.teams[0] === undefined) {
-                console.log(player)
                 await players.push({
                     registrationNumber: player.registrationNumber,
                     name: player.name,

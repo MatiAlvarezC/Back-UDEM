@@ -79,10 +79,10 @@ async function getCounts(TEAMS) {
     for (let i = 0; i < TEAMS.length; i++) {
         await teams.push({
             id: TEAMS[i].id,
-            nombre: TEAMS[i].nombre,
+            name: TEAMS[i].name,
             isActive: TEAMS[i].isActive,
             sportId: TEAMS[i].sportId,
-            players: TEAMS[i].player.length
+            players: TEAMS[i].players.length
         })
         aux = 0;
     }
