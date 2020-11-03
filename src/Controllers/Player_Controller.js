@@ -28,19 +28,19 @@ const create = async (req, res) => {
         })
 
         if (player) {
-            if (player.registrationNumber === registrationNumber) {
-                return res.status(400).send("Numero de matricula duplicado")
+            if ((player.registrationNumber).toString() === registrationNumber) {
+                return res.status(400).send("Número de matrícula duplicado")
             } else if (player.email === email) {
-                return res.status(400).send("Direccion de correo duplicada")
-            } else if (player.medicalDataPolicyNumber === policyNumber) {
-                return res.status(400).send("Numero de poliza duplicado")
+                return res.status(400).send("Dirección de correo duplicada")
+            } else if ((player.medicalDataPolicyNumber).toString() === policyNumber) {
+                return res.status(400).send("Número de póliza duplicado")
             }
         }
 
         const medical = await Medical_Data.findByPk(policyNumber)
 
         if (medical) {
-            return res.status(400).send("Numero de poliza duplicado")
+            return res.status(400).send("Número de póliza duplicado")
         }
 
         await Medical_Data.create({

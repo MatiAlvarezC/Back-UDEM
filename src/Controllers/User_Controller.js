@@ -44,7 +44,6 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -59,7 +58,7 @@ const create = async (req, res) => {
             email,
         } = req.body
 
-        hash = await payrollNumber.slice(0, 4);
+        hash = await (payrollNumber.toString()).slice(0, 4);
         hash = await bcrypt.hash(hash, 10)
 
         let x = 1;
@@ -78,7 +77,7 @@ const create = async (req, res) => {
                     [Op.or]: [
                         {username},
                         {payrollNumber},
-                        (email !== null ? {email} : {})
+                        (email !== null ? {email} : null)
                     ]
                 }
             })
@@ -88,7 +87,7 @@ const create = async (req, res) => {
                     x++
                 } else if (email === user.email) {
                     return res.status(400).send("Direccion de Correo Duplicada")
-                } else if (payrollNumber === user.payrollNumber) {
+                } else if (payrollNumber === (user.payrollNumber).toString()) {
                     return res.status(400).send("Nomina Duplicada")
                 }
             } else {
@@ -103,8 +102,7 @@ const create = async (req, res) => {
         })
 
         return res.sendStatus(200)
-    } catch
-        (e) {
+    } catch (e) {
         return res.sendStatus(500)
     }
 }
@@ -161,7 +159,7 @@ const update = async (req, res) => {
             })
 
             if (user2) {
-                return res.status(400).send("Direccion de Correo Duplicada")
+                return res.status(400).send("Dirección de Correo Duplicada")
             }
         }
 
