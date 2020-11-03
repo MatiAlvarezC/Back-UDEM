@@ -49,7 +49,7 @@ const Medical_Data = DB.define('medicalData', {
     },
     remainingDays: {
         type: Sequelize.VIRTUAL,
-        get: () => {
+        get: function (){
             const aux = new Date()
             const today = new Date(aux.getTime() - aux.getTimezoneOffset() * 60000)
             const timeDifference = new Date(this.policyValidity) - today
