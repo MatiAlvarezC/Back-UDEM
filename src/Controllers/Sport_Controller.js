@@ -114,7 +114,7 @@ async function filterByActive(SPORTS, data) {
 /** ======= FUNCIONES CRUD ======= **/
 
 const create = async (req, res) => {
-    const {name: name, isActive} = req.body
+    const {name, isActive} = req.body
     if (isActive == null || name == null) {
         return res.status(400).send({message: 'Uno de los campos esta vacío'})
     } else {
