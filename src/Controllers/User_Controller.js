@@ -204,6 +204,10 @@ const getAssignedTeamsIds = async (req, res) => {
     }
 }
 
+const token = (req, res) => {
+    return res.sendStatus(200)
+}
+
 module.exports = {
     login,
     create,
@@ -211,5 +215,6 @@ module.exports = {
     getById,
     update,
     assignToTeam,
-    getAssignedTeamsIds
+    getAssignedTeamsIds,
+    token
 }

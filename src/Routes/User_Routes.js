@@ -1,8 +1,10 @@
 const express = require('express')
 const User_C = require('../Controllers/User_Controller')
 const router = express.Router()
+const isAuth = require("../Middlewares/Auth")
 
 router.post('/login',User_C.login)
+router.get('/token',isAuth,User_C.token)
 router.post('/register',User_C.create)
 router.get('/getAll',User_C.getAll)
 router.get('/:id',User_C.getById)
