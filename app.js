@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 routes(app);
-require('./src/database/connection');
+require('./src/Database/Connection');
 
 app.listen(PORT, () => {
     console.log('Started on PORT ',PORT);

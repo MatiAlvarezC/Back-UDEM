@@ -1,8 +1,8 @@
-const Estado = require('../models/Estado')
+const Status = require('../Models/Status')
 
 const create = async (req, res) => {
     try {
-        await Estado.create({
+        await Status.create({
             ...req.body
         })
 
@@ -15,7 +15,7 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const status = await Estado.findAll()
+        const status = await Status.findAll()
 
         if (status.length === 0) {
             return res.sendStatus(404)
@@ -30,7 +30,7 @@ const getAll = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const status = await Estado.findByPk(req.params.id)
+        const status = await Status.findByPk(req.params.id)
 
         if (!status) {
             return res.sendStatus(404)
