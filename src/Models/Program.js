@@ -1,16 +1,16 @@
-const DB = require("../database/connection")
+const DB = require("../Database/Connection")
 const Sequelize = require('sequelize')
 
-const Campus = DB.define('campus', {
+const Program = DB.define('program', {
     id: {
-        type: Sequelize.TINYINT,
+        type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    nombre: {
-        type: Sequelize.STRING(30),
-        allowNull: false
+    name: {
+        type: Sequelize.STRING,
+        allowNull: false,
     },
     isActive: {
         type: Sequelize.BOOLEAN,
@@ -19,4 +19,4 @@ const Campus = DB.define('campus', {
     }
 })
 
-module.exports = Campus
+module.exports = Program
