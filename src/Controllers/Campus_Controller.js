@@ -3,11 +3,6 @@ const Campus = require("../models/Campus");
 
 const create = async (req, res) => {
     try{
-<<<<<<< HEAD
-        const { nombre } = req.body
-
-=======
->>>>>>> 6e4505d1b778d05ad82edd850438fd375ee9d835
         await Campus.create({
             ...req.body
         })
@@ -27,7 +22,7 @@ const getAll = async (req, res) => {
             return res.sendStatus(404)
         }
 
-        return res.send({"ewe": "owo"})
+        return res.send(campus)
 
     } catch (e) {
         return res.sendStatus(500)

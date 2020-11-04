@@ -32,18 +32,9 @@ DB.authenticate()       /** Esta función verifica la conexión con la base de d
         console.log('Connection error', error.message)
     })
 
-<<<<<<< HEAD
-/*
-DB.sync({force: true})
- .then(() => {
-        console.log("All models were synchronized successfully.")
-    })
-*/
-=======
 /**DB.sync({force: true})
     .then(() => {
         console.log("All models were synchronized successfully.")
     })*/
 
->>>>>>> 6e4505d1b778d05ad82edd850438fd375ee9d835
 module.exports = DB;
