@@ -74,6 +74,12 @@ const getById = async (req, res) => {
                     model: Status
                 },
                 {
+                    model: Team,
+                    include: {
+                        model: Sport
+                    }
+                },
+                {
                     model: Medical_Data
                 }
             ]
@@ -82,7 +88,6 @@ const getById = async (req, res) => {
         if (!player) {
             return res.sendStatus(404)
         }
-        console.log(player)
 
         return res.send(player)
 
@@ -169,10 +174,11 @@ const assignToTeam = async (req, res) => {
         const player = await Player.findByPk(req.params.id)
         const team = await Team.findByPk(teamId)
 
-        player.addEquipo(team, {
+        await player.addTeam(team, {
             through: {
                 startDate,
                 endDate,
+                isCaptain: true,
                 position,
                 number
             }

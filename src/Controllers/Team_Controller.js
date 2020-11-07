@@ -3,26 +3,24 @@ const Team = require('../Models/Team')
 
 /** ======= FUNCIONES CRUD ======= **/
 const create = async (req, res) => {
-    const {name, isActive, sportId} = req.body
+    const {name, isActive, sportId, gender} = req.body
     if (isActive == null || name == null || sportId == null) {
         return res.status(400).send({message: 'Uno de los campos esta vacío'})
-    } else {
-        try {
-            await Team.findOne({where: {name}}).then(result => {
-                if (result !== null) {
-                    throw Error('Equipo Existente')
-                } else {
-                    Team.create({
-                        ...req.body
-                    }).then(team => {
-                        return res.send(team)
-                    })
-                }
-            })
-        } catch (e) {
-            console.log(e.message)
-            return res.status(400).send({message: e.message})
+    }
+    try {
+        const team = await Team.findOne({where: {name, gender, sportId}})
+        if (team) {
+            return res.status(400).send("Equipo ya existente")
         }
+
+        Team.create({
+            ...req.body
+        }).then(team => {
+            return res.send(team)
+        })
+    } catch (e) {
+        console.log(e.message)
+        return res.status(400).send({message: e.message})
     }
 }
 
@@ -72,6 +70,21 @@ const getByID = (req, res) => {
         return res.status(400).send({message: e.message})
     }
 }
+
+const getBySport = async (req, res) => {
+    try {
+        const team = await Team.findAll({where: {sportId: req.params.id}})
+
+        if (team.length === 0) {
+            return res.sendStatus(404)
+        }
+
+        return res.send(team)
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
 /** ======= FUNCIONES CRUD ======= **/
 
 async function getCounts(TEAMS) {
@@ -94,4 +107,5 @@ module.exports = {
     update,
     getAll,
     getByID,
+    getBySport
 }
