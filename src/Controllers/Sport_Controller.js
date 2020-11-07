@@ -122,7 +122,7 @@ const create = async (req, res) => {
     try {
         await Sport.findOne({where: {name: name}}).then(result => {
             if (result !== null) {
-                throw Error('Deporte Existente')
+                return res.status(400).send("Deporte Existente")
             } else {
                 Sport.create({
                     ...req.body
