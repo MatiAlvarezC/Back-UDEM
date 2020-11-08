@@ -200,6 +200,11 @@ const getTeamsByPlayer = async (req, res) => {
                     attributes: {
                         exclude: ['sportId', 'id']
                     },
+                    through: {
+                      attributes: {
+                          exclude: ['teamId', 'playerRegistrationNumber']
+                      }
+                    },
                     include: [
                         {
                             model: Sport,
