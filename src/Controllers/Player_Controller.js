@@ -189,6 +189,33 @@ const assignToTeam = async (req, res) => {
     }
 }
 
+const getTeamsByPlayer = async (req, res) => {
+    let registrationNumber = req.params.id
+    try {
+        await Player.findByPk(registrationNumber, {
+            attributes: ['registrationNumber'],
+            include: [
+                {
+                    model: Team,
+                    attributes: {
+                        exclude: ['sportId', 'id']
+                    },
+                    include: [
+                        {
+                            model: Sport,
+                            attributes: ['name']
+                        }
+                    ]
+                },
+            ]
+        }).then(async teamsByPlayer => {
+            return res.send(teamsByPlayer)
+        })
+    } catch (e) {
+        return res.status(400).send({message: e.message})
+    }
+}
+
 /**
  * En caso de que el deportista no pertenezca a algun equipo
  * se mostraran los campos como "N/A" correspondientes al deporte
@@ -302,5 +329,6 @@ module.exports = {
     update,
     getByPage,
     getMaxPages,
-    assignToTeam
+    assignToTeam,
+    getTeamsByPlayer
 }
