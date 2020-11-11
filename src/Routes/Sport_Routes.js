@@ -21,6 +21,7 @@ router.get('/getMaxPagesForCoaches/:id', Sport_C.getMaxPagesForCoaches)
 router.get('/:page/:order/:by', Sport_C.getByPage)
 
 router.get('/:id', Sport_C.getByID)
+router.get('/getTeamAssigned/:id', Sport_C.getTeamAssigned)
 
 
 

@@ -3,7 +3,8 @@ const Team = require('../Models/Team')
 const Player = require('../Models/Player')
 const User = require('../Models/User')
 const {Op} = require('sequelize')
-const itemsPerPage = 6; /** deportes por pagina **/
+const itemsPerPage = 6;
+/** deportes por pagina **/
 const coachesPerPage = 6;
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
@@ -295,7 +296,7 @@ const getByID = (req, res) => {
 
 const getMaxPagesForCoaches = async (req, res) => {
     try {
-        const items = await User.count( {
+        const items = await User.count({
             where: {
                 [Op.not]: [
                     {isAdmin: [true]}
@@ -322,6 +323,19 @@ const getMaxPagesForCoaches = async (req, res) => {
     } catch (e) {
         return res.status(500).send({message: 'INTERNAL_ERROR'})
     }
+}
+
+
+const getTeamAssigned = async (req, res) => {
+    const jeje = await Team.findByPk(req.params.id, {
+        attributes: ['id','name'],
+        include: {
+            model: Player,
+            attributes: ['registrationNumber','name','paternalLastName','maternalLastName']
+        }
+    })
+    return res.send(jeje)
+
 }
 
 const getCoachesByPage = async (req, res) => {
@@ -373,6 +387,7 @@ const getCoachesByPage = async (req, res) => {
     }
 }
 
+
 module.exports = {
     create,
     update,
@@ -381,5 +396,6 @@ module.exports = {
     getByPage,
     getMaxPages,
     getCoachesByPage,
-    getMaxPagesForCoaches
+    getMaxPagesForCoaches,
+    getTeamAssigned
 }
