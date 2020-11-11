@@ -10,7 +10,7 @@ router.get('/:id',Player_C.getById)
 router.patch('/update/:id',Player_C.update)
 router.post('/assignToTeam/:id',Player_C.assignToTeam)
 
-
+router.get('/getTeams/:id',Player_C.getTeamsByPlayer)
 
 router.get('/:page/:order/:by',Player_C.getByPage)
 

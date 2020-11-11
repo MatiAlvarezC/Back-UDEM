@@ -8,7 +8,3 @@ router.get('/getAll',Status_R.getAll)
 router.patch('/:id',Status_R.update)
 
 module.exports = router;
-
-
-
-
