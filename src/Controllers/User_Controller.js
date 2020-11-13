@@ -13,10 +13,10 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const user = await User.findOne({where: {username: username}, attributes: {include: ['password']}})
+        const user = await User.findOne({where: {username: username}, attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}})
 
         if (!user) {
-            return res.sendStatus(401)
+            return res.status(401).send("Datos Incorrectos")
         }
 
         if (user.failedLoginAttempts >= 5 && ((validator.toDate(Date()) - user.failedLoginTime) / 60000) <= 30) {
@@ -26,12 +26,12 @@ const login = async (req, res) => {
         const pass = await bcrypt.compare(password, user.password)
 
         if (!pass) {
-            await user.update({failedLoginAttempts: (user.failedLoginAttempts + 1), failedLoginTime: Date()})
+            await user.update({failedLoginAttempts: user.failedLoginAttempts + 1, failedLoginTime: Date()})
 
-            return res.sendStatus(401)
+            return res.status(401).send("Datos Incorrectos")
         }
 
-        await user.update({failedLoginAttempts: null, failedLoginTime: null})
+        await user.update({failedLoginAttempts: 0, failedLoginTime: null})
 
         const payload = {
             sub: user.username,
@@ -44,6 +44,7 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
+        console.log(e)
         return res.sendStatus(500)
     }
 }
