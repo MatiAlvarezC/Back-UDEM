@@ -386,6 +386,32 @@ const getCoachesByPage = async (req, res) => {
     }
 }
 
+/*
+const create = async (req, res) => {
+    const {name, isActive} = req.body
+    if (isActive == null || name == null) {
+        return res.status(400).send({message: 'Uno de los campos esta vacío'})
+    }
+    try {
+        await Sport.findOne({where: {name: name}}).then(result => {
+            if (result !== null) {
+                return res.status(400).send("Deporte Existente")
+            } else {
+                Sport.create({
+                    ...req.body
+                }).then(sport => {
+                    return res.send(sport)
+                })
+            }
+        })
+    } catch (e) {
+        return res.status(400).send({message: e.message})
+    }
+}
+*/
+
+
+
 
 module.exports = {
     create,
