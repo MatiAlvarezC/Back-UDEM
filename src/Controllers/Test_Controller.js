@@ -30,6 +30,11 @@ const sendEmail = async (req, res) => {
     return res.send("mensaje enviado")
 }
 
+const test = async (req,res) => {
+    return res.send("test jenkins")
+}
+
 module.exports = {
-    sendEmail
+    sendEmail,
+    test
 }
