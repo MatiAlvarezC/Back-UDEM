@@ -3,7 +3,7 @@ const fs = require("fs");
 const router = express.Router()
 
 router.get('/sportSVG/:img', (req, res) => {
-    let img = process.env.FILEPATH + '\\' + req.params.img;
+    let img = process.env.FILEPATH + '/' + req.params.img;
     console.log(img)
     fs.access(img, fs.constants.F_OK, err => {
         console.log(`${img} ${err ? "does not exist" : "exists"}`);
