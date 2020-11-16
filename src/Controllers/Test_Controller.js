@@ -31,6 +31,7 @@ const sendEmail = async (req, res) => {
 }
 
 const test = async (req,res) => {
+    console.log("test")
     return res.send("test jenkins")
 }
 
