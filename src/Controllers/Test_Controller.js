@@ -31,7 +31,7 @@ const sendEmail = async (req, res) => {
 }
 
 const test = async (req,res) => {
-    return res.send("test jenkins")
+    return res.send("test webhook")
 }
 
 module.exports = {
