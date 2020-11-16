@@ -11,7 +11,7 @@ const DB = new Sequelize(process.env.BBDD, process.env.USERBBDD, process.env.PAS
         freezeTableName: true,        /** Desactiva la creación de tablas en plural **/
         defaultScope: {
             attributes: {
-                exclude: ['password'] /** Previene mostrar el atributo password en las queries **/
+                exclude: ['password','failedLoginAttempts','failedLoginTime'] /** Previene mostrar el atributo password en las queries **/
             }
         }
     },
