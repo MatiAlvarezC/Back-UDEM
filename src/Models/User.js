@@ -61,11 +61,18 @@ const User = DB.define('user', {
     },
     failedLoginAttempts: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
+        default: 0
     },
     failedLoginTime: {
         type: Sequelize.DATE,
         allowNull: true
+    },
+    fullName: {
+        type: Sequelize.VIRTUAL,
+        get() {
+            return `${this.name} ${this.paternalLastName} ${this.maternalLastName}`;
+        }
     }
 })
 

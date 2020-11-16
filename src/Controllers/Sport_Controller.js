@@ -3,7 +3,8 @@ const Team = require('../Models/Team')
 const Player = require('../Models/Player')
 const User = require('../Models/User')
 const {Op} = require('sequelize')
-const itemsPerPage = 6; /** deportes por pagina **/
+const itemsPerPage = 6;
+/** deportes por pagina **/
 const coachesPerPage = 6;
 
 /** ======= FUNCIONES DE ORDENAMIENTO ======= **/
@@ -117,22 +118,21 @@ const create = async (req, res) => {
     const {name, isActive} = req.body
     if (isActive == null || name == null) {
         return res.status(400).send({message: 'Uno de los campos esta vacío'})
-    } else {
-        try {
-            await Sport.findOne({where: {name: name}}).then(result => {
-                if (result !== null) {
-                    throw Error('Deporte Existente')
-                } else {
-                    Sport.create({
-                        ...req.body
-                    }).then(sport => {
-                        return res.send(sport)
-                    })
-                }
-            })
-        } catch (e) {
-            return res.status(400).send({message: e.message})
-        }
+    }
+    try {
+        await Sport.findOne({where: {name: name}}).then(result => {
+            if (result !== null) {
+                return res.status(400).send("Deporte Existente")
+            } else {
+                Sport.create({
+                    ...req.body
+                }).then(sport => {
+                    return res.send(sport)
+                })
+            }
+        })
+    } catch (e) {
+        return res.status(400).send({message: e.message})
     }
 }
 
@@ -295,7 +295,7 @@ const getByID = (req, res) => {
 
 const getMaxPagesForCoaches = async (req, res) => {
     try {
-        const items = await User.count( {
+        const items = await User.count({
             where: {
                 [Op.not]: [
                     {isAdmin: [true]}
@@ -322,6 +322,19 @@ const getMaxPagesForCoaches = async (req, res) => {
     } catch (e) {
         return res.status(500).send({message: 'INTERNAL_ERROR'})
     }
+}
+
+
+const getTeamAssigned = async (req, res) => {
+    const jeje = await Team.findByPk(req.params.id, {
+        attributes: ['id','name'],
+        include: {
+            model: Player,
+            attributes: ['registrationNumber','name','paternalLastName','maternalLastName']
+        }
+    })
+    return res.send(jeje)
+
 }
 
 const getCoachesByPage = async (req, res) => {
@@ -373,6 +386,33 @@ const getCoachesByPage = async (req, res) => {
     }
 }
 
+/*
+const create = async (req, res) => {
+    const {name, isActive} = req.body
+    if (isActive == null || name == null) {
+        return res.status(400).send({message: 'Uno de los campos esta vacío'})
+    }
+    try {
+        await Sport.findOne({where: {name: name}}).then(result => {
+            if (result !== null) {
+                return res.status(400).send("Deporte Existente")
+            } else {
+                Sport.create({
+                    ...req.body
+                }).then(sport => {
+                    return res.send(sport)
+                })
+            }
+        })
+    } catch (e) {
+        return res.status(400).send({message: e.message})
+    }
+}
+*/
+
+
+
+
 module.exports = {
     create,
     update,
@@ -381,5 +421,6 @@ module.exports = {
     getByPage,
     getMaxPages,
     getCoachesByPage,
-    getMaxPagesForCoaches
+    getMaxPagesForCoaches,
+    getTeamAssigned
 }

@@ -1,6 +1,30 @@
 const express = require('express');
 const Sport_C = require('../Controllers/Sport_Controller')
+const Directory = require('../Middlewares/Directory')
 const router = express.Router();
+
+/**-- Subida de archivos --**/
+const path = require('path')
+/** gestiona el formato del fichero **/
+
+const multer = require('multer')
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, process.env.FILEPATH) /** ruta donde se guardaran los ficheros **/
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({storage});
+
+router.post('/upload', Directory, upload.single('file'), (req, res) => {
+    console.log(`storage location is ${req.hostname}/${req.file.path}`)
+    return res.send(req.file)
+})
+/**-- FIN Subida de archivos --**/
+
 
 router.post('/register', Sport_C.create)
 router.patch('/update/:id', Sport_C.update)
@@ -21,7 +45,7 @@ router.get('/getMaxPagesForCoaches/:id', Sport_C.getMaxPagesForCoaches)
 router.get('/:page/:order/:by', Sport_C.getByPage)
 
 router.get('/:id', Sport_C.getByID)
-
+router.get('/getTeamAssigned/:id', Sport_C.getTeamAssigned)
 
 
 module.exports = router
