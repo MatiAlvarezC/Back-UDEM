@@ -10,6 +10,9 @@ const Team_User = require("../Team_User")
 const User = require("../User")
 const Comment = require("../Comment")
 const Comment_Type = require("../Comment_Type")
+const Championship = require("../Championship")
+const Championship_Player = require("../Championship_Player")
+const Championship_Team = require("../Championship_Team")
 
 Status.hasMany(Player, {foreignKey: {name: 'statusId'}})
 Player.belongsTo(Status, {foreignKey: {name: 'statusId'}})
@@ -37,5 +40,12 @@ Comment.belongsTo(Comment_Type, {foreignKey: {name: 'commentTypeId'}})
 
 User.hasMany(Comment, {foreignKey: {name: 'userPayrollNumber'}})
 Comment.belongsTo(User, {foreignKey: {name: 'userPayrollNumber'}})
+
 Player.hasMany(Comment, {foreignKey: {name: 'playerRegistrationNumber'}})
 Comment.belongsTo(Player, {foreignKey: {name: 'playerRegistrationNumber'}})
+
+Championship.belongsToMany(Team,{through: Championship_Team, foreignKey: {name: 'championshipId'}})
+Team.belongsToMany(Championship,{through: Championship_Team, foreignKey: {name: 'teamId'}})
+
+Championship.belongsToMany(Player,{through: Championship_Player, foreignKey: {name: 'championshipId'}})
+Player.belongsToMany(Championship,{through: Championship_Player, foreignKey: {name: 'playerRegistrationNumber'}})
