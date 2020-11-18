@@ -106,7 +106,7 @@ const create = async (req, res) => {
             ...req.body
         })
 
-        return res.send({username: user.username,password: (payrollNumber.toString()).slice(0, 4)})
+        return res.send({username: user.username, password: (payrollNumber.toString()).slice(0, 4)})
     } catch (e) {
         return res.sendStatus(500)
     }
@@ -193,15 +193,17 @@ const assignToTeam = async (req, res) => {
 
 const getAssignedTeamsIds = async (req, res) => {
     try {
-        const teamIds = await TeamUser.findAll({
-            where: {
-                userPayrollNumber: req.params.id
-            },
-            attributes: [
-                'teamId'
-            ]
-        });
-        return res.send(teamIds)
+        User.findByPk(req.params.id,{
+            attributes: ['name'],
+            include:{
+                model: Team,
+                include:{
+                    model: Sport,
+                }
+            }
+        }).then(user => {
+            return res.send(user.teams)
+        })
     } catch (e) {
         return res.sendStatus(500)
     }
