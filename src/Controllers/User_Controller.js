@@ -39,6 +39,7 @@ const login = async (req, res) => {
 
         const payload = {
             sub: user.username,
+            id: user.payrollNumber,
             name: user.name,
             isAdmin: user.isAdmin
         }
@@ -99,13 +100,13 @@ const create = async (req, res) => {
             }
         } while (counter === 0)
 
-        await User.create({
+        let user = await User.create({
             username,
             password: hash,
             ...req.body
         })
 
-        return res.sendStatus(200)
+        return res.send({username: user.username,password: (payrollNumber.toString()).slice(0, 4)})
     } catch (e) {
         return res.sendStatus(500)
     }
