@@ -48,7 +48,6 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -184,7 +183,7 @@ const assignToTeam = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id)
         const team = await Team.findByPk(req.body.equipo_id)
-        user.addEquipo(team)
+        user.addTeam(team)
         return res.sendStatus(200)
     } catch (e) {
         return res.sendStatus(500)

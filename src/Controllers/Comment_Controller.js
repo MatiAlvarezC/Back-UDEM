@@ -2,11 +2,13 @@ const Comment = require("../Models/Comment");
 const Comment_Type = require("../Models/Comment_Type");
 const User = require("../Models/User");
 const Player = require("../Models/Player");
+const Team_Player = require("../Models/Team_Player");
 
 
 const create = async (req, res) => {
     try{
         const {content, commentTypeId, userPayrollNumber} = req.body
+        var {teamId} = req.body
         const id = req.params.id
 
         var fieldNotFound = false
@@ -34,16 +36,29 @@ const create = async (req, res) => {
             return res.status(400).send(errorMessage.slice(0, -2))
         }
 
-        const comment = await Comment.create({
-            ...req.body
-        })
-
         const type = await Comment_Type.findByPk(req.body.commentTypeId)
         const user = await User.findByPk(req.body.userPayrollNumber)
         const player = await Player.findByPk(req.params.id)
 
-        await type.addComment(comment)
+        // Si no se indica el equipo para el comentario, se intenta tomar el equipo actual del deportista
+        if (!teamId) {
+            const team_player = await Team_Player.findOne(
+                {
+                    where: {
+                        playerRegistrationNumber: id,
+                        endDate: null
+                    }
+                }
+            )
+            teamId = team_player.teamId
+        }
 
+        const comment = await Comment.create({
+            ...req.body,
+            teamId
+        })
+
+        await type.addComment(comment)
         await user.addComment(comment)
         await player.addComment(comment)
 
@@ -55,6 +70,21 @@ const create = async (req, res) => {
     }
 }
 
+const update = async (req, res) => {
+    try {
+        await Comment.update({
+            ...req.body
+        }, {where: {id: req.params.id}}).then(() => {
+            return res.send({status: 'SUCCESS'})
+        }).catch(e => {
+            return res.status(400).send({message: e.message})
+        })
+    } catch (e) {
+        return res.status(400).send({message: e.message})
+    }
+}
+
 module.exports = {
-    create
+    create,
+    update
 }

@@ -11,7 +11,9 @@ const Comment = DB.define('comment', {
     content: {
         type: Sequelize.TEXT,
         allowNull: false,
-    }
-})
+    }},
+    
+    {timestamps: true}
+)
 
 module.exports = Comment
