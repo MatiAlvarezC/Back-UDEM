@@ -2,6 +2,7 @@ const {Op} = require('sequelize')
 const User = require("../Models/User")
 const Team = require("../Models/Team")
 const TeamUser = require("../Models/Team_User")
+const Sport = require("../Models/Sport")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
@@ -13,7 +14,10 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const user = await User.findOne({where: {username: username}, attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}})
+        const user = await User.findOne({
+            where: {username: username},
+            attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}
+        })
 
         if (!user) {
             return res.status(401).send("Datos Incorrectos")
@@ -207,6 +211,60 @@ const token = (req, res) => {
     return res.sendStatus(200)
 }
 
+
+const getTrainersBySport = async (request, response) => {
+
+    await User.findAll({
+        attributes: ['payrollNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive'],
+        include: {
+            model: Team,
+            attributes: ['sportId'],
+            include: {
+                model: Sport,
+                attributes: ['id', 'name']
+            }
+        }
+    }).then(async users => {
+
+        let USERS = []
+        let usersBySport = []
+        await users.map(user => {
+            if (user.teams[0] === undefined) {
+                console.log('test')
+            } else {
+                let sports = []
+                user.teams.map(team => {
+                    sports.push({id: team.sport.id, name: team.sport.name})
+                })
+
+                USERS.push({
+                    payrollNumber: user.payrollNumber,
+                    name: user.name,
+                    paternalLastName: user.paternalLastName,
+                    maternalLastName: user.maternalLastName,
+                    isActive: user.isActive,
+                    sport: sports
+                })
+            }
+        })
+
+        await USERS.map(async user => {
+            user.sport.map(sport => {
+                if (sport.id == request.params.idSport) {
+                    usersBySport.push({
+                        ...user,
+                        sport: sport
+                    })
+                }
+            })
+        })
+
+
+        return response.send(usersBySport)
+    })
+}
+
+
 module.exports = {
     login,
     create,
@@ -215,5 +273,6 @@ module.exports = {
     update,
     assignToTeam,
     getAssignedTeamsIds,
-    token
+    token,
+    getTrainersBySport
 }

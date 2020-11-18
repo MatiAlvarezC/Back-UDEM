@@ -13,4 +13,7 @@ router.post('/assignToTeam/:id',User_C.assignToTeam)
 router.get('/getAssignedTeamsIds/:id',User_C.getAssignedTeamsIds)
 
 
+router.get('/getTrainersBySport/:idSport',User_C.getTrainersBySport )
+
+
 module.exports = router
