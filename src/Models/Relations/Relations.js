@@ -44,6 +44,9 @@ Comment.belongsTo(User, {foreignKey: {name: 'userPayrollNumber'}})
 Player.hasMany(Comment, {foreignKey: {name: 'playerRegistrationNumber'}})
 Comment.belongsTo(Player, {foreignKey: {name: 'playerRegistrationNumber'}})
 
+Team.hasMany(Comment, {foreignKey: {name: 'teamId'}})
+Comment.belongsTo(Team, {foreignKey: {name: 'teamId'}})
+
 Championship.belongsToMany(Team,{through: Championship_Team, foreignKey: {name: 'championshipId'}})
 Team.belongsToMany(Championship,{through: Championship_Team, foreignKey: {name: 'teamId'}})
 
