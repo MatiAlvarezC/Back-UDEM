@@ -62,7 +62,7 @@ const User = DB.define('user', {
     failedLoginAttempts: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
     },
     failedLoginTime: {
         type: Sequelize.DATE,
