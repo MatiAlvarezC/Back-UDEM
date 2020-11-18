@@ -207,6 +207,24 @@ const token = (req, res) => {
     return res.sendStatus(200)
 }
 
+const getCoaches = async (req, res) => {
+    try {
+        const isAdmin = req.body
+        const coaches = await User.findAll({
+            where: { isAdmin: 0  },
+            attributes: ['name', 'paternalLastName', 'maternalLastName', 'isActive'],
+            include: {
+                model: Team,
+                attributes: ['name']
+            }
+        })
+        return res.send(coaches)
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+
 module.exports = {
     login,
     create,
@@ -215,5 +233,6 @@ module.exports = {
     update,
     assignToTeam,
     getAssignedTeamsIds,
-    token
+    token,
+    getCoaches
 }
