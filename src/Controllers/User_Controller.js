@@ -2,6 +2,7 @@ const {Op} = require('sequelize')
 const User = require("../Models/User")
 const Team = require("../Models/Team")
 const TeamUser = require("../Models/Team_User")
+const Sport = require("../Models/Sport")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
@@ -13,7 +14,10 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const user = await User.findOne({where: {username: username}, attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}})
+        const user = await User.findOne({
+            where: {username: username},
+            attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}
+        })
 
         if (!user) {
             return res.status(401).send("Datos Incorrectos")
@@ -35,6 +39,7 @@ const login = async (req, res) => {
 
         const payload = {
             sub: user.username,
+            id: user.payrollNumber,
             name: user.name,
             isAdmin: user.isAdmin
         }
@@ -44,7 +49,6 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -96,13 +100,13 @@ const create = async (req, res) => {
             }
         } while (counter === 0)
 
-        await User.create({
+        let user = await User.create({
             username,
             password: hash,
             ...req.body
         })
 
-        return res.sendStatus(200)
+        return res.send({username: user.username, password: (payrollNumber.toString()).slice(0, 4)})
     } catch (e) {
         return res.sendStatus(500)
     }
@@ -180,7 +184,7 @@ const assignToTeam = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id)
         const team = await Team.findByPk(req.body.equipo_id)
-        user.addEquipo(team)
+        user.addTeam(team)
         return res.sendStatus(200)
     } catch (e) {
         return res.sendStatus(500)
@@ -189,15 +193,17 @@ const assignToTeam = async (req, res) => {
 
 const getAssignedTeamsIds = async (req, res) => {
     try {
-        const teamIds = await TeamUser.findAll({
-            where: {
-                userPayrollNumber: req.params.id
-            },
-            attributes: [
-                'teamId'
-            ]
-        });
-        return res.send(teamIds)
+        User.findByPk(req.params.id,{
+            attributes: ['name'],
+            include:{
+                model: Team,
+                include:{
+                    model: Sport,
+                }
+            }
+        }).then(user => {
+            return res.send(user.teams)
+        })
     } catch (e) {
         return res.sendStatus(500)
     }
@@ -222,6 +228,57 @@ const getCoaches = async (req, res) => {
     } catch (e) {
         return res.sendStatus(500)
     }
+
+const getTrainersBySport = async (request, response) => {
+
+    await User.findAll({
+        attributes: ['payrollNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive'],
+        include: {
+            model: Team,
+            attributes: ['sportId'],
+            include: {
+                model: Sport,
+                attributes: ['id', 'name']
+            }
+        }
+    }).then(async users => {
+
+        let USERS = []
+        let usersBySport = []
+        await users.map(user => {
+            if (user.teams[0] === undefined) {
+                console.log('test')
+            } else {
+                let sports = []
+                user.teams.map(team => {
+                    sports.push({id: team.sport.id, name: team.sport.name})
+                })
+
+                USERS.push({
+                    payrollNumber: user.payrollNumber,
+                    name: user.name,
+                    paternalLastName: user.paternalLastName,
+                    maternalLastName: user.maternalLastName,
+                    isActive: user.isActive,
+                    sport: sports
+                })
+            }
+        })
+
+        await USERS.map(async user => {
+            user.sport.map(sport => {
+                if (sport.id == request.params.idSport) {
+                    usersBySport.push({
+                        ...user,
+                        sport: sport
+                    })
+                }
+            })
+        })
+
+
+        return response.send(usersBySport)
+    })
 }
 
 
@@ -234,5 +291,6 @@ module.exports = {
     assignToTeam,
     getAssignedTeamsIds,
     token,
-    getCoaches
+    getCoaches,
+    getTrainersBySport
 }
