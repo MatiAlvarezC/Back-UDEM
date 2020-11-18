@@ -44,7 +44,6 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
