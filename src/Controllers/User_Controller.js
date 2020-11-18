@@ -35,6 +35,7 @@ const login = async (req, res) => {
 
         const payload = {
             sub: user.username,
+            id: user.payrollNumber,
             name: user.name,
             isAdmin: user.isAdmin
         }
@@ -44,7 +45,6 @@ const login = async (req, res) => {
         return res.send(jwt.sign(payload, process.env.SECRET))
 
     } catch (e) {
-        console.log(e)
         return res.sendStatus(500)
     }
 }
@@ -96,13 +96,13 @@ const create = async (req, res) => {
             }
         } while (counter === 0)
 
-        await User.create({
+        let user = await User.create({
             username,
             password: hash,
             ...req.body
         })
 
-        return res.sendStatus(200)
+        return res.send({username: user.username,password: (payrollNumber.toString()).slice(0, 4)})
     } catch (e) {
         return res.sendStatus(500)
     }
@@ -180,7 +180,7 @@ const assignToTeam = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id)
         const team = await Team.findByPk(req.body.equipo_id)
-        user.addEquipo(team)
+        user.addTeam(team)
         return res.sendStatus(200)
     } catch (e) {
         return res.sendStatus(500)
