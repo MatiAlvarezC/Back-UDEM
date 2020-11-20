@@ -10,6 +10,7 @@ const Comment_R = require('./Comment_Routes')
 const Comment_Type_R = require('./Comment_Type_Routes')
 const Test_R = require('./Test_Routes')
 const FILES = require('./FILES')
+const Championship_R  = require('./Championship_Routes')
 
 require("../Models/Relations/Relations")
 
@@ -28,4 +29,5 @@ module.exports = (app) => {
     app.use('/commentType', Comment_Type_R)
     app.use('/files', FILES)
     app.use('/test', Test_R)
+    app.use('/championship', Championship_R)
 }
