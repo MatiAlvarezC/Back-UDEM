@@ -213,22 +213,6 @@ const token = (req, res) => {
     return res.sendStatus(200)
 }
 
-const getCoaches = async (req, res) => {
-    try {
-        const isAdmin = req.body
-        const coaches = await User.findAll({
-            where: { isAdmin: 0  },
-            attributes: ['name', 'paternalLastName', 'maternalLastName', 'isActive'],
-            include: {
-                model: Team,
-                attributes: ['name']
-            }
-        })
-        return res.send(coaches)
-    } catch (e) {
-        return res.sendStatus(500)
-    }
-
 const getTrainersBySport = async (request, response) => {
 
     await User.findAll({
@@ -281,6 +265,21 @@ const getTrainersBySport = async (request, response) => {
     })
 }
 
+const getTrainers = async (req, res) => {
+    try {
+        const trainers = await User.findAll({
+            where: { isAdmin: 0  },
+            attributes: ['name', 'paternalLastName', 'maternalLastName', 'isActive'],
+            include: {
+                model: Team,
+                attributes: ['name'] 
+            }
+        })
+        return res.send(trainers)
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
 
 module.exports = {
     login,
@@ -291,6 +290,6 @@ module.exports = {
     assignToTeam,
     getAssignedTeamsIds,
     token,
-    getCoaches,
-    getTrainersBySport
+    getTrainersBySport,
+    getTrainers
 }
