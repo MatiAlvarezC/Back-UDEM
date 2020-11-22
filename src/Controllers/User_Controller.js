@@ -5,6 +5,7 @@ const TeamUser = require("../Models/Team_User")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
+const Sport = require('../Models/Sport')
 
 const login = async (req, res) => {
     try {
@@ -206,6 +207,61 @@ const getAssignedTeamsIds = async (req, res) => {
 const token = (req, res) => {
     return res.sendStatus(200)
 }
+const getTraniersBySport = async (request, response)=>{
+    User.findAll({
+        attributes:['payrollNumber','name', 'paternalLastName','maternalLastName','isActive'],
+        include:{
+            model: Team,
+            //attributes:{exclude:['id','name','gender','isActive']},
+            attributes:['sportId'],
+            include: {
+
+                model: Sport,
+                attributes:['id','name']
+
+
+            }
+        }
+    }).then(async users=>{
+        let USERS=[]
+        let usersBySport=[]
+        await users.map(user=>{
+            if (user.teams[0]===undefined){
+
+            }else{
+                let sports = []
+                user.teams.map(team=>{
+                    sports.push({id:team.sport.id ,name:team.sport.name})
+                })
+                USERS.push({
+                  payrollNumber: user.payrollNumber,
+                  name: user.name,
+                  paternalLastName: user.paternalLastName,
+                  maternalLastName: user.maternalLastName,
+                  isActive: user.isActive,
+                  sport: sports
+                })
+            }
+
+        })
+        await USERS.map(user=>{
+            user.sport.map(sport=>{
+                if (sport.id == request.params.idSport){
+                    usersBySport.push({
+                        ...user,
+                        sport:sport
+                    })
+                }
+            })
+
+        })
+
+
+
+        return response.send(usersBySport)
+    })
+
+}
 
 module.exports = {
     login,
@@ -215,5 +271,6 @@ module.exports = {
     update,
     assignToTeam,
     getAssignedTeamsIds,
-    token
+    token,
+    getTraniersBySport
 }
