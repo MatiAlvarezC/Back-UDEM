@@ -11,10 +11,9 @@ router.get('/:id',User_C.getById)
 router.patch('/update/:id',User_C.update)
 router.post('/assignToTeam/:id',User_C.assignToTeam)
 router.get('/getAssignedTeamsIds/:id',User_C.getAssignedTeamsIds)
-
 router.get('/getTrainerBySport/:idSport',User_C.getTraniersBySport)
 
-router.get('/getTrainersBySport/:idSport',User_C.getTrainersBySport )
+
 
 
 module.exports = router
