@@ -272,7 +272,13 @@ const getTrainers = async (req, res) => {
             attributes: ['name', 'paternalLastName', 'maternalLastName', 'isActive'],
             include: {
                 model: Team,
-                attributes: ['name'] 
+                attributes: ['name'],
+                through: {
+                    attributes: {
+                        exclude: ['teamId', 'userPayrollNumber']
+                    }
+                }
+                
             }
         })
         return res.send(trainers)
