@@ -3,6 +3,7 @@ const Comment_Type = require("../Models/Comment_Type");
 const User = require("../Models/User");
 const Player = require("../Models/Player");
 const Team_Player = require("../Models/Team_Player");
+const Team = require("../Models/Team");
 
 
 const create = async (req, res) => {
@@ -84,7 +85,45 @@ const update = async (req, res) => {
     }
 }
 
+const getAll = async (req, res) => {
+    try {
+        const comments = await Comment.findAll({
+            order: [['createdAt', 'ASC']],
+            include: [
+                {
+                    model: Team,
+                    attributes: [
+                        'name',
+                        'gender'
+                    ]
+                },
+                {
+                    model: User,
+                    attributes: [
+                        'name',
+                        'paternalLastName',
+                        'maternalLastName'
+                    ]
+                },
+                {
+                    model: Comment_Type,
+                    attributes: ['name']
+                }]
+        })
+
+        if (comments.length === 0) {
+            return res.sendStatus(404)
+        }
+
+        return res.send(comments)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     create,
-    update
+    update,
+    getAll
 }
