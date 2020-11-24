@@ -4,6 +4,7 @@ const User = require("../Models/User");
 const Player = require("../Models/Player");
 const Team_Player = require("../Models/Team_Player");
 const Team = require("../Models/Team");
+const Sport = require("../Models/Sport");
 
 
 const create = async (req, res) => {
@@ -92,9 +93,12 @@ const getAll = async (req, res) => {
             include: [
                 {
                     model: Team,
-                    attributes: [
-                        'name',
-                        'gender'
+                    attributes: ['name'],
+                    include: [
+                        {
+                            model: Sport,
+                            attributes: ['name']
+                        }
                     ]
                 },
                 {
