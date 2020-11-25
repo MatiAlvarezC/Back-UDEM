@@ -1,6 +1,7 @@
 const Championship = require('../Models/Championship')
 const Team = require('../Models/Team')
 const Player = require('../Models/Player')
+const Sport = require('../Models/Sport')
 const itemsPerPage = 6;
 /** Campeonatos por pagina **/
 
@@ -50,11 +51,42 @@ const getAll = async (req, res) => {
             include: [
                 {
                     model: Team,
-                    attributes: ['name']
+                    attributes: ['name'],
+                    through: {
+                        attributes: {
+                            exclude: ['championshipId', 'teamId']
+                        },
+                    },
+                    include: [
+                        {
+                            model: Sport,
+                            attributes: ['name'],
+                        }
+                    ]
                 },
                 {
                     model: Player,
                     attributes: ['name'],
+                    through: {
+                        attributes: {
+                            exclude: ['championshipId', 'playerRegistrationNumber']
+                        }
+                    },
+                    include: [
+                        {
+                            model: Team,
+                            attributes: ['name'],
+                            include: [
+                                {
+                                    model: Sport,
+                                    attributes: ['name'],
+                                }
+                            ],
+                            through: {
+                                attributes: []
+                            },
+                        }
+                    ],
                 }
             ]
         })
@@ -88,11 +120,42 @@ const getByPage = async (req, res) => {
                 include: [
                     {
                         model: Team,
-                        attributes: ['name']
+                        attributes: ['name'],
+                        through: {
+                            attributes: {
+                                exclude: ['championshipId', 'teamId']
+                            }
+                        },
+                        include: [
+                            {
+                                model: Sport,
+                                attributes: ['name'],
+                            }
+                        ]
                     },
                     {
                         model: Player,
                         attributes: ['name'],
+                        through: {
+                            attributes: {
+                                exclude: ['championshipId', 'playerRegistrationNumber']
+                            }
+                        },
+                        include: [
+                            {
+                                model: Team,
+                                attributes: ['name'],
+                                include: [
+                                    {
+                                        model: Sport,
+                                        attributes: ['name'],
+                                    }
+                                ],
+                                through: {
+                                    attributes: []
+                                },
+                            }
+                        ],
                     }
                 ]
             }).then(async CHAMPIONSHIP => {
@@ -106,11 +169,42 @@ const getByPage = async (req, res) => {
                 include: [
                     {
                         model: Team,
-                        attributes: ['name']
+                        attributes: ['name'],
+                        through: {
+                            attributes: {
+                                exclude: ['championshipId', 'teamId']
+                            }
+                        },
+                        include: [
+                            {
+                                model: Sport,
+                                attributes: ['name'],
+                            }
+                        ]
                     },
                     {
                         model: Player,
                         attributes: ['name'],
+                        through: {
+                            attributes: {
+                                exclude: ['championshipId', 'playerRegistrationNumber']
+                            }
+                        },
+                        include: [
+                            {
+                                model: Team,
+                                attributes: ['name'],
+                                include: [
+                                    {
+                                        model: Sport,
+                                        attributes: ['name'],
+                                    }
+                                ],
+                                through: {
+                                    attributes: []
+                                },
+                            }
+                        ],
                     }
                 ]
             }).then(async CHAMPIONSHIP => {
@@ -135,7 +229,6 @@ const getMaxPages = async (req, res) => {
         return res.status(500).send({message: 'INTERNAL_ERROR'})
     }
 }
-
 /** ======= Fin Obtención de numero maximo de paginas ======= **/
 
 module.exports = {
