@@ -38,8 +38,11 @@ User.belongsToMany(Team, {through: Team_User, foreignKey: {name: 'userPayrollNum
 Comment_Type.hasMany(Comment, {foreignKey: {name: 'commentTypeId'}})
 Comment.belongsTo(Comment_Type, {foreignKey: {name: 'commentTypeId'}})
 
-User.hasMany(Comment, {foreignKey: {name: 'userPayrollNumber'}})
-Comment.belongsTo(User, {foreignKey: {name: 'userPayrollNumber'}})
+User.hasMany(Comment, {as: 'commentWriter', foreignKey: {name: 'userPayrollNumberWriter'}})
+Comment.belongsTo(User, {as: 'commentWriter', foreignKey: {name: 'userPayrollNumberWriter'}})
+
+User.hasMany(Comment, {as: 'commentEditor', foreignKey: {name: 'userPayrollNumberEditor'}})
+Comment.belongsTo(User, {as: 'commentEditor', foreignKey: {name: 'userPayrollNumberEditor'}})
 
 Player.hasMany(Comment, {foreignKey: {name: 'playerRegistrationNumber'}})
 Comment.belongsTo(Player, {foreignKey: {name: 'playerRegistrationNumber'}})
