@@ -15,4 +15,7 @@ router.post('/assignToTeam/:id',isAdmin,User_C.assignToTeam)
 router.get('/getAssignedTeamsIds/:id',isAuth,User_C.getAssignedTeamsIds)
 router.patch('/updatePassword',isAuth,User_C.updatePassword)
 
+router.get('/getTrainersBySport/:idSport',User_C.getTrainersBySport )
+
+
 module.exports = router

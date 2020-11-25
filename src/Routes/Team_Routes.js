@@ -10,4 +10,7 @@ router.get('/getAll',isAdmin, Team_C.getAll)
 router.get('/:id',isAuth, Team_C.getByID)
 router.get('/getAll/:id',isAdmin, Team_C.getBySport)
 
+router.post('/assignToChampionship/:id',Team_C.assignToChampionship)
+router.get('/getAssignedChampionship/:id',Team_C.getAssignedChampionship)
+
 module.exports = router

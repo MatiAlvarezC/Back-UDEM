@@ -1,5 +1,6 @@
 const Player = require('../Models/Player')
 const Team = require('../Models/Team')
+const Championship = require('../Models/Championship')
 
 /** ======= FUNCIONES CRUD ======= **/
 const create = async (req, res) => {
@@ -102,10 +103,47 @@ async function getCounts(TEAMS) {
     return teams
 }
 
+
+//Campeonatos
+const assignToChampionship = async (req, res) => {
+    try {
+        const {championshipId} = req.body
+        const team = await Team.findByPk(req.params.id)
+        const championship = await Championship.findByPk(championshipId)
+
+        await team.addChampionship(championship)
+
+        return res.sendStatus(200)
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const getAssignedChampionship = async (req, res) => {
+    try {
+        Team.findByPk(req.params.id,{
+            attributes: ['name'],
+            include:{
+                model: Championship,
+                through: {
+                    attributes: {
+                        exclude: ['championshipId', 'teamId']
+                    }
+                }
+            }
+        }).then(AssignedChampionship => {
+            return res.send(AssignedChampionship)
+        })
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
 module.exports = {
     create,
     update,
     getAll,
     getByID,
-    getBySport
+    getBySport,
+    assignToChampionship,
+    getAssignedChampionship
 }

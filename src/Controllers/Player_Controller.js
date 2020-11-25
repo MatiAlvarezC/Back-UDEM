@@ -5,7 +5,9 @@ const Campus = require("../Models/Campus");
 const Program = require("../Models/Program");
 const Team = require("../Models/Team");
 const Sport = require("../Models/Sport");
-const {Op} = require('sequelize')
+const {Op} = require('sequelize');
+const Championship = require("../Models/Championship");
+const ChampionshipPlayer = require("../Models/Championship_Player")
 const itemsPerPage = 10;
 /** jugadores por pagina **/
 
@@ -327,6 +329,41 @@ const getMaxPages = async (req, res) => {
     }
 }
 
+//Campeonatos
+const assignToChampionship = async (req, res) => {
+    try {
+        const {championshipId} = req.body
+        const player = await Player.findByPk(req.params.id)
+        const championship = await Championship.findByPk(championshipId)
+
+        await player.addChampionship(championship)
+
+        return res.sendStatus(200)
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const getAssignedChampionship = async (req, res) => {
+    try {
+        Player.findByPk(req.params.id,{
+            attributes: ['name'],
+            include:{
+                model: Championship,
+                through: {
+                    attributes: {
+                        exclude: ['championshipId', 'playerRegistrationNumber']
+                    }
+                }
+            }
+        }).then(AssignedChampionship => {
+            return res.send(AssignedChampionship)
+        })
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     create,
     getById,
@@ -335,5 +372,7 @@ module.exports = {
     getByPage,
     getMaxPages,
     assignToTeam,
-    getTeamsByPlayer
+    getTeamsByPlayer,
+    assignToChampionship,
+    getAssignedChampionship
 }

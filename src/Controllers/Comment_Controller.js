@@ -3,11 +3,13 @@ const Comment_Type = require("../Models/Comment_Type");
 const User = require("../Models/User");
 const Player = require("../Models/Player");
 const Team_Player = require("../Models/Team_Player");
+const Team = require("../Models/Team");
+const Sport = require("../Models/Sport");
 
 
 const create = async (req, res) => {
     try{
-        const {content, commentTypeId, userPayrollNumber} = req.body
+        const {content, commentTypeId, userPayrollNumberWriter} = req.body
         var {teamId} = req.body
         const id = req.params.id
 
@@ -21,7 +23,7 @@ const create = async (req, res) => {
             fieldNotFound = true
             missing.push("tipo de comentario")
         }
-        if (!userPayrollNumber) {
+        if (!userPayrollNumberWriter) {
             fieldNotFound = true
             missing.push("usuario")
         }
@@ -37,7 +39,7 @@ const create = async (req, res) => {
         }
 
         const type = await Comment_Type.findByPk(req.body.commentTypeId)
-        const user = await User.findByPk(req.body.userPayrollNumber)
+        const user = await User.findByPk(req.body.userPayrollNumberWriter)
         const player = await Player.findByPk(req.params.id)
 
         // Si no se indica el equipo para el comentario, se intenta tomar el equipo actual del deportista
@@ -50,7 +52,9 @@ const create = async (req, res) => {
                     }
                 }
             )
-            teamId = team_player.teamId
+            if (team_player) {
+                teamId = team_player.teamId
+            }
         }
 
         const comment = await Comment.create({
@@ -59,7 +63,7 @@ const create = async (req, res) => {
         })
 
         await type.addComment(comment)
-        await user.addComment(comment)
+        await comment.setCommentWriter(user)
         await player.addComment(comment)
 
         return res.sendStatus(200)
@@ -72,9 +76,20 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        await Comment.update({
-            ...req.body
-        }, {where: {id: req.params.id}}).then(() => {
+        const comment = await Comment.findByPk(req.params.id)
+
+        if (!comment) {
+            return res.status(400).send({message: "ID de comentario inválido."})
+        }
+
+        const {userPayrollNumberEditor} = req.body
+        if (!userPayrollNumberEditor) {
+            return res.status(400).send({message: "ID de usuario editor faltante."})
+        }
+
+        await comment.update({...req.body}).then(async () => {
+            const user = await User.findByPk(userPayrollNumberEditor)
+            await comment.setCommentEditor(user)
             return res.send({status: 'SUCCESS'})
         }).catch(e => {
             return res.status(400).send({message: e.message})
@@ -84,7 +99,48 @@ const update = async (req, res) => {
     }
 }
 
+const getAll = async (req, res) => {
+    try {
+        const comments = await Comment.findAll({
+            order: [['createdAt', 'ASC']],
+            include: [
+                {
+                    model: Team,
+                    attributes: ['name'],
+                    include: [
+                        {
+                            model: Sport,
+                            attributes: ['name']
+                        }
+                    ]
+                },
+                {
+                    model: User,
+                    attributes: [
+                        'name',
+                        'paternalLastName',
+                        'maternalLastName'
+                    ]
+                },
+                {
+                    model: Comment_Type,
+                    attributes: ['name']
+                }]
+        })
+
+        if (comments.length === 0) {
+            return res.sendStatus(404)
+        }
+
+        return res.send(comments)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     create,
-    update
+    update,
+    getAll
 }

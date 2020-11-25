@@ -16,5 +16,7 @@ router.get('/getTeams/:id',isAuth,Player_C.getTeamsByPlayer)
 
 router.get('/:page/:order/:by',isAuth,Player_C.getByPage)
 
+router.post('/assignToChampionship/:id',Player_C.assignToChampionship)
+router.get('/getAssignedChampionship/:id',Player_C.getAssignedChampionship)
 
 module.exports = router
