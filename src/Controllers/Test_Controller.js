@@ -1,26 +1,25 @@
-/*const transport = require('./../Node_Mailer/Connection')*/
-const nodemailer = require("nodemailer");
+const transport = require("../Node_Mailer/Connection")
 
 const sendEmail = async (req, res) => {
-    console.log("xd")
-
-    let transport = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'test.node.mailer.ctm@gmail.com',
-            pass: 'auto2020'
-        }
-    });
-
+    const token = "h435jk6h45jk6h54jk6hjk456h4k.4j5h34"
     const message = {
         from: 'elonmusk@tesla.com', // Sender address
-        to: 'correo@gmail.com',         // List of recipients
+        to: 'm.gutierrez.tolorza@gmail.com',         // List of recipients
         subject: 'Asunto', // Subject line
-        text: 'texto' // Plain text body
+        html: '<div style="display: flex; justify-content: center">' +
+            '<div style="background: #FBEE23; width: 500px; height: 800px;font-family: Roboto; text-align: center">' +
+            '<h1>Expediente deportivo UDEM</h1>' +
+            '<p>Hemos recibido una solicitud de restablecimiento de contraseña.</p>' +
+            '<p>Para restablecer su contraseña ingrese al siguiente <a href="algunaweairaca">enlace</a>.</p>' +
+            '<p><a href="http://localhost:3000/'+token+'" id="token">http://localhost:3000/'+token+'</a></p>' +
+            '<p>Este enlace tiene una duración de una hora.</p>' +
+            '<p>En caso de no haber solicitado este restablecimiento ignore este correo</p>' +
+            '</div>' +
+            '</div>'
     };
 
     await transport.sendMail(message, (e, info) => {
-        if(e){
+        if (e) {
             console.log(e)
         } else {
             console.log(info)
@@ -30,7 +29,7 @@ const sendEmail = async (req, res) => {
     return res.send("mensaje enviado")
 }
 
-const test = async (req,res) => {
+const test = async (req, res) => {
     return res.send("test webhook 9")
 }
 

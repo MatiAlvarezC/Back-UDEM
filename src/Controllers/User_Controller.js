@@ -5,6 +5,7 @@ const TeamUser = require("../Models/Team_User")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
+const transport = require('../Node_Mailer/Connection')
 
 const login = async (req, res) => {
     try {
@@ -207,6 +208,56 @@ const token = (req, res) => {
     return res.sendStatus(200)
 }
 
+const recoverPassword = async (req, res) => {
+    try {
+        const user = await User.findOne({
+            where: {
+                [Op.or]: [
+                    {username: req.body.info},
+                    {email: req.body.info}
+                ]
+            }
+        })
+
+        if(user) {
+            const payload = {
+                id: user.payrollNumber,
+                sub: user.username,
+                name: user.name
+            }
+            const token = jwt.sign(payload,process.env.SECRET,{expiresIn: '1h'})
+
+            return res.send(token)
+        }
+
+        return res.sendStatus(200)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const updatePassword = async (req, res) => {
+    try{
+        let {id,password} = req.body
+
+        const user = await User.findByPk(id)
+
+        if(!user) {
+            return res.status(400).send("No se encuentra el usuario")
+        }
+
+        password = await bcrypt.hash(password,10)
+
+        await user.update({password})
+
+        return res.sendStatus(200)
+
+    } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
 module.exports = {
     login,
     create,
@@ -215,5 +266,7 @@ module.exports = {
     update,
     assignToTeam,
     getAssignedTeamsIds,
-    token
+    token,
+    recoverPassword,
+    updatePassword
 }

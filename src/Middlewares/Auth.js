@@ -2,13 +2,27 @@ const jwt = require('jsonwebtoken')
 
 module.exports = (req, res, next) => {
     try {
-        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-            jwt.verify(req.headers.authorization.split(' ')[1], process.env.SECRET);
-            next();
-        } else {
-            return res.sendStatus()
+        const authorization = req.headers.authorization
+
+        if (!authorization) {
+            return res.sendStatus(401)
         }
-    } catch(e) {
-        return res.status(e.code || 500).send({ status: e.status || 'ERROR', message: e.message })
+
+        const parts = authorization.split(" ")
+        if (parts.length !== 2) {
+            return res.sendStatus(401)
+        }
+
+        if (parts[0] !== "Bearer") {
+            return res.sendStatus(401)
+        }
+
+        const token = parts[1]
+
+        jwt.verify(token, process.env.SECRET)
+
+        next();
+    } catch (e) {
+        return res.sendStatus(500)
     }
 }

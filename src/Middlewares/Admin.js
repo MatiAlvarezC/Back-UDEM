@@ -1,21 +1,32 @@
 const jwt = require('jsonwebtoken')
 
-const isAdmin = (req, res, next) => {
+module.exports = (req, res, next) => {
     try {
-        const data = jwt.verify(req.headers.authorization.split(' ')[1], process.env.SECRET);
-        if (!data.isAdmin) {
-            throw {
-                code: 403,
-                status: 'ACCESO_DENEGADO',
-                message: 'Rol invalido'
-            }
+        const authorization = req.headers.authorization
+
+        if (!authorization) {
+            return res.sendStatus(401)
         }
+
+        const parts = authorization.split(" ")
+        if (parts.length !== 2) {
+            return res.sendStatus(401)
+        }
+
+        if (parts[0] !== "Bearer") {
+            return res.sendStatus(401)
+        }
+
+        const token = parts[1]
+
+        const user = jwt.verify(token, process.env.SECRET)
+
+        if(!user.isAdmin) {
+            return res.sendStatus(401)
+        }
+
         next();
     } catch(e) {
-        res
-            .status(e.code || 500)
-            .send({ status: e.status || 'ERROR', message: e.message })
+        return res.sendStatus(500)
     }
 }
-
-module.exports = { isAdmin };
