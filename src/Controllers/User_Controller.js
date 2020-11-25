@@ -213,7 +213,7 @@ const token = (req, res) => {
 const getTrainersBySport = async (request, response) => {
 
     await User.findAll({
-        attributes: ['payrollNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive'],
+        attributes: ['id','payrollNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive'],
         include: {
             model: Team,
             attributes: ['sportId'],
@@ -236,6 +236,7 @@ const getTrainersBySport = async (request, response) => {
                 })
 
                 USERS.push({
+                    id: user.id,
                     payrollNumber: user.payrollNumber,
                     name: user.name,
                     paternalLastName: user.paternalLastName,
