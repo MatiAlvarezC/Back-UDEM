@@ -294,7 +294,7 @@ const updatePassword = async (req, res) => {
 const getTrainersBySport = async (request, response) => {
 
     await User.findAll({
-        attributes: ['id','payrollNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive'],
+        attributes: ['payrollNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive'],
         include: {
             model: Team,
             attributes: ['sportId'],
@@ -307,30 +307,30 @@ const getTrainersBySport = async (request, response) => {
 
         let USERS = []
         let usersBySport = []
-        await users.map(user => {
+        await users.map(async user => {
             if (user.teams[0] === undefined) {
                 console.log('test')
             } else {
                 let sports = []
                 user.teams.map(team => {
                     sports.push({id: team.sport.id, name: team.sport.name})
+                    console.log(sports)
                 })
 
-                USERS.push({
-                    id: user.id,
+                 USERS.push({
                     payrollNumber: user.payrollNumber,
                     name: user.name,
                     paternalLastName: user.paternalLastName,
                     maternalLastName: user.maternalLastName,
                     isActive: user.isActive,
-                    sport: sports
+                    sport:sports
                 })
             }
         })
-
+        console.log(USERS)
         await USERS.map(async user => {
             user.sport.map(sport => {
-                if (sport.id === request.params.idSport) {
+                if (sport.id == request.params.idSport) {
                     usersBySport.push({
                         ...user,
                         sport: sport
@@ -377,6 +377,6 @@ module.exports = {
     token,
     recoverPassword,
     updatePassword,
-    getTrainersBySport,
-    getTrainers
+    getTrainers,
+    getTrainersBySport
 }
