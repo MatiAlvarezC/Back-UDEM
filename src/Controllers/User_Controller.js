@@ -332,7 +332,7 @@ const getTrainersBySport = async (request, response) => {
 
         await USERS.map(async user => {
             user.sport.map(sport => {
-                if (sport.id === request.params.idSport) {
+                if (sport.id == request.params.idSport) {
                     usersBySport.push({
                         ...user,
                         sport: sport
