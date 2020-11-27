@@ -14,10 +14,7 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const user = await User.findOne({
-            where: {username: username},
-            attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}
-        })
+        const user = await User.findOne({where: {username: username}, attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}})
 
         if (!user) {
             return res.status(401).send("Datos Incorrectos")
@@ -100,7 +97,7 @@ const create = async (req, res) => {
             }
         } while (counter === 0)
 
-        let user = await User.create({
+        await User.create({
             username,
             password: hash,
             ...req.body
@@ -310,26 +307,27 @@ const getTrainersBySport = async (request, response) => {
 
         let USERS = []
         let usersBySport = []
-        await users.map(user => {
+        await users.map(async user => {
             if (user.teams[0] === undefined) {
                 console.log('test')
             } else {
                 let sports = []
                 user.teams.map(team => {
                     sports.push({id: team.sport.id, name: team.sport.name})
+                    console.log(sports)
                 })
 
-                USERS.push({
+                 USERS.push({
                     payrollNumber: user.payrollNumber,
                     name: user.name,
                     paternalLastName: user.paternalLastName,
                     maternalLastName: user.maternalLastName,
                     isActive: user.isActive,
-                    sport: sports
+                    sport:sports
                 })
             }
         })
-
+        console.log(USERS)
         await USERS.map(async user => {
             user.sport.map(sport => {
                 if (sport.id == request.params.idSport) {
@@ -379,6 +377,6 @@ module.exports = {
     token,
     recoverPassword,
     updatePassword,
-    getTrainersBySport,
-    getTrainers
+    getTrainers,
+    getTrainersBySport
 }
