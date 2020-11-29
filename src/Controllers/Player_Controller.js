@@ -57,6 +57,7 @@ const create = async (req, res) => {
         return res.sendStatus(200)
 
     } catch (e) {
+        console.log(e.message)
         return res.sendStatus(500)
     }
 }
@@ -152,7 +153,6 @@ const update = async (req, res) => {
         await policy.update({
             ...req.body
         })
-
         await player.update({
             ...req.body
         })
@@ -266,11 +266,16 @@ const getByPage = async (req, res) => {
                     }
                 ]
             },
+            {
+                model: Medical_Data
+            }
         ]
     }).then(async Players => {
+        console.log(Players[0].medicalDatum.src)
+
         Players.map(async player => {
+
             if (player.teams[0] === undefined) {
-                console.log(player)
                 await players.push({
                     registrationNumber: player.registrationNumber,
                     name: player.name,
@@ -285,7 +290,8 @@ const getByPage = async (req, res) => {
                             startDate: "N/A",
                             endDate: "N/A",
                         }
-                    }]
+                    }],
+                    medicalPDF: player.medicalDatum.src
                 })
             } else {
                 await players.push({

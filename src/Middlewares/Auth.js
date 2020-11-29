@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken')
 module.exports = (req, res, next) => {
     try {
         const authorization = req.headers.authorization
-
         if (!authorization) {
             return res.sendStatus(401)
         }
