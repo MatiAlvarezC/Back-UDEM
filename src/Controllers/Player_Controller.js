@@ -268,7 +268,12 @@ const getByPage = async (req, res) => {
             },
             {
                 model: Medical_Data
-            }
+            },
+            {
+                model: Status,
+                required: true,
+                attributes: ['id', 'name']
+            },
         ]
     }).then(async Players => {
         console.log(Players[0].medicalDatum.src)
@@ -291,7 +296,11 @@ const getByPage = async (req, res) => {
                             endDate: "N/A",
                         }
                     }],
-                    medicalPDF: player.medicalDatum.src
+                    medicalPDF: player.medicalDatum.src,
+                    status: [{
+                        id: player.status.id,
+                        name: player.status.name,
+                    }],
                 })
             } else {
                 await players.push({
@@ -315,7 +324,11 @@ const getByPage = async (req, res) => {
                             endDate: player.teams[player.teams.length - 1].teamPlayer.endDate,
                             isCaptain: player.teams[player.teams.length - 1].teamPlayer.isCaptain
                         }
-                    }]
+                    }],
+                    status: [{
+                        id: player.status.id,
+                        name: player.status.name,
+                    }],
                 })
             }
         })
