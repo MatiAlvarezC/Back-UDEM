@@ -60,6 +60,12 @@ const Player = DB.define('player', {
     src: {
         type: Sequelize.STRING,
         allowNull: true
+    },
+    fullName: {
+        type: Sequelize.VIRTUAL,
+        get() {
+            return `${this.name} ${this.paternalLastName} ${this.maternalLastName}`;
+        }
     }
 })
 

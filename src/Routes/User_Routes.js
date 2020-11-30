@@ -18,7 +18,7 @@ router.patch('/updatePassword',isAuth,User_C.updatePassword)
 
 router.get('/getTrainers',isAdmin,User_C.getTrainers)
 
-router.get('/getTrainersBySport/:idSport',isAdmin,User_C.getTrainersBySport )
+router.get('/getTrainersBySport/:idSport',User_C.getTrainersBySport )
 
 router.get('/:id',isAdmin,User_C.getById)
 module.exports = router
