@@ -349,7 +349,7 @@ const getTrainersBySport = async (request, response) => {
 const getTrainers = async (req, res) => {
     try {
         const trainers = await User.findAll({
-            where: {isAdmin: 0},
+            where: {isAdmin: false},
             attributes: ['name', 'paternalLastName', 'maternalLastName', 'isActive'],
             include: {
                 model: Team,
