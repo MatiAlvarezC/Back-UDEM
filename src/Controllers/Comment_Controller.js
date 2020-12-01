@@ -82,9 +82,13 @@ const update = async (req, res) => {
             return res.status(400).send({message: "ID de comentario inválido."})
         }
 
-        const {userPayrollNumberEditor} = req.body
+        const {userPayrollNumberEditor, content, commentTypeId} = req.body
         if (!userPayrollNumberEditor) {
             return res.status(400).send({message: "ID de usuario editor faltante."})
+        }
+
+        if(!content && !commentTypeId) {
+            return res.status(400).send("Comentario no cambio")
         }
 
         await comment.update({...req.body}).then(async () => {
@@ -115,7 +119,15 @@ const getAll = async (req, res) => {
                     ]
                 },
                 {
-                    model: User,
+                    model: User, as: "commentWriter",
+                    attributes: [
+                        'name',
+                        'paternalLastName',
+                        'maternalLastName'
+                    ]
+                },
+                {
+                    model: User, as: "commentEditor",
                     attributes: [
                         'name',
                         'paternalLastName',
