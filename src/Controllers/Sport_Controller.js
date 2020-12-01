@@ -2,6 +2,7 @@ const Sport = require('../Models/Sport')
 const Team = require('../Models/Team')
 const Player = require('../Models/Player')
 const User = require('../Models/User')
+const Status = require("../Models/Status");
 const {Op} = require('sequelize')
 const itemsPerPage = 6;
 /** deportes por pagina **/
@@ -273,7 +274,14 @@ const getByID = (req, res) => {
                 include: [
                     {
                         model: Player,
-                        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive', 'debutYear', 'statusId']
+                        attributes: ['registrationNumber', 'name', 'paternalLastName', 'maternalLastName', 'isActive', 'debutYear', 'statusId'],
+                        include: [
+                            {
+                                model: Status,
+                                required: true,
+                                attributes: ['id', 'name']
+                            }
+                        ]
                     },
                     {
                         model: User,
