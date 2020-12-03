@@ -14,7 +14,10 @@ const login = async (req, res) => {
             password
         } = req.body
 
-        const user = await User.findOne({where: {username: username}, attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime']}})
+        const user = await User.findOne({
+            where: {username: username},
+            attributes: {include: ['password', 'failedLoginAttempts', 'failedLoginTime','updatedPassword']}
+        })
 
         if (!user) {
             return res.status(401).send("Datos Incorrectos")
@@ -38,7 +41,8 @@ const login = async (req, res) => {
             sub: user.username,
             id: user.payrollNumber,
             name: user.name,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            updatedPassword: user.updatedPassword
         }
 
         /*const expiresIn = 600*/ /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
@@ -97,7 +101,7 @@ const create = async (req, res) => {
             }
         } while (counter === 0)
 
-        await User.create({
+        let user = await User.create({
             username,
             password: hash,
             ...req.body
@@ -282,7 +286,7 @@ const updatePassword = async (req, res) => {
 
         password = await bcrypt.hash(password, 10)
 
-        await user.update({password})
+        await user.update({password, failedLoginAttempts: 0, failedLoginTime: null})
 
         return res.sendStatus(200)
 
@@ -317,20 +321,20 @@ const getTrainersBySport = async (request, response) => {
                     console.log(sports)
                 })
 
-                 USERS.push({
+                USERS.push({
                     payrollNumber: user.payrollNumber,
                     name: user.name,
                     paternalLastName: user.paternalLastName,
                     maternalLastName: user.maternalLastName,
                     isActive: user.isActive,
-                    sport:sports
+                    sport: sports
                 })
             }
         })
         console.log(USERS)
         await USERS.map(async user => {
             user.sport.map(sport => {
-                if (sport.id == request.params.idSport) {
+                if (sport.id === request.params.idSport) {
                     usersBySport.push({
                         ...user,
                         sport: sport

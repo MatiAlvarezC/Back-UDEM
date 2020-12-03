@@ -68,6 +68,11 @@ const User = DB.define('user', {
         type: Sequelize.DATE,
         allowNull: true
     },
+    updatedPassword: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
     fullName: {
         type: Sequelize.VIRTUAL,
         get() {
