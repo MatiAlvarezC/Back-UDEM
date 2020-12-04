@@ -45,6 +45,7 @@ router.get('/:id',isAuth,Player_C.getById)
 
 router.patch('/update/:id',isAdmin,Player_C.update)
 router.post('/assignToTeam/:id',isAdmin,Player_C.assignToTeam)
+router.patch('/unassignToTeam/:id',Player_C.unassignToTeam)
 
 router.get('/getTeams/:id',isAuth,Player_C.getTeamsByPlayer)
 
