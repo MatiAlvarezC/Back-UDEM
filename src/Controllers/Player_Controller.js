@@ -7,7 +7,7 @@ const Team = require("../Models/Team");
 const Sport = require("../Models/Sport");
 const {Op} = require('sequelize');
 const Championship = require("../Models/Championship");
-const ChampionshipPlayer = require("../Models/Championship_Player")
+const Team_Player = require("../Models/Team_Player");
 const itemsPerPage = 10;
 /** jugadores por pagina **/
 
@@ -187,6 +187,28 @@ const assignToTeam = async (req, res) => {
         })
         return res.sendStatus(200)
     } catch (e) {
+        return res.sendStatus(500)
+    }
+}
+
+const unassignToTeam = async (req, res) => {
+    try {
+        const {
+            teamId,
+            endDate
+        } = req.body
+
+        await Team_Player.update({endDate: endDate,},
+            {
+                where: {
+                    playerRegistrationNumber: req.params.id,
+                    teamId: teamId
+                }
+        })
+
+        return res.sendStatus(200)
+    } catch (e) {
+        console.log(e.message)
         return res.sendStatus(500)
     }
 }
@@ -391,6 +413,7 @@ module.exports = {
     getByPage,
     getMaxPages,
     assignToTeam,
+    unassignToTeam,
     getTeamsByPlayer,
     assignToChampionship,
     getAssignedChampionship
