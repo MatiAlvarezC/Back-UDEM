@@ -109,14 +109,14 @@ const getByPage = async (req, res) => {
     }
     /** Solo puede recibir ISACTIVE o ISNOTACTIVE **/
     if (by !== 'ISACTIVE' && by !== 'ISNOTACTIVE') {
-        by = 'ISACTIVE'
+        by = 'NAME'
     }
     try {
         if (by === 'ISACTIVE') {
             await Championship.findAll({
                 attributes: ['name', 'place', 'date', 'isActive'],
-                order: [['date', order]],
-                where: {isActive: by === 'ISACTIVE'},
+                order: [[by, order]],
+                where: {isActive: order === 'ASC'},
                 include: [
                     {
                         model: Team,
@@ -159,13 +159,13 @@ const getByPage = async (req, res) => {
                     }
                 ]
             }).then(async CHAMPIONSHIP => {
+                console.log(CHAMPIONSHIP.length)
                 return res.send(await CHAMPIONSHIP.slice(from, from + itemsPerPage))
             })
-        } else if ('ISNOTACTIVE') {
+        } else  {
             await Championship.findAll({
                 attributes: ['name', 'place', 'date', 'isActive'],
-                order: [['date', order]],
-                where: {isActive: by === 'ISACTIVE'},
+                order: [[by, order]],
                 include: [
                     {
                         model: Team,
