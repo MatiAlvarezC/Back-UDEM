@@ -170,7 +170,8 @@ const assignToTeam = async (req, res) => {
             startDate,
             endDate,
             position,
-            number
+            number,
+            isCaptain
         } = req.body
 
         const player = await Player.findByPk(req.params.id)
@@ -180,7 +181,7 @@ const assignToTeam = async (req, res) => {
             through: {
                 startDate,
                 endDate,
-                isCaptain: true,
+                isCaptain,
                 position,
                 number
             }
