@@ -295,6 +295,44 @@ const updatePassword = async (req, res) => {
     }
 }
 
+const modifyPassword = async (request, response) => {
+    try {
+        let {id, actualPassword, newPassword, confirmNewPassword} = request.body
+
+        if(!actualPassword || !newPassword || !confirmNewPassword || newPassword !== confirmNewPassword) {
+            return response.sendStatus(400)
+
+        }
+
+        const user = await User.findOne({
+            where: {
+                payrollNumber: id
+            },
+            attributes: {
+                include: ['password', 'failedLoginAttempts', 'failedLoginTime','updatedPassword']
+            }
+        })
+
+        if(!user) {
+            return response.sendStatus(400)
+        }
+
+        let pass = await bcrypt.compare(actualPassword, user.password)
+
+        if(!pass) {
+            return response.sendStatus(400)
+        }
+
+        let password = await bcrypt.hash(newPassword, 10)
+
+        await user.update({password, failedLoginAttempts: 0, failedLoginTime: null, updatedPassword: true})
+
+        return response.sendStatus(200)
+    } catch (e) {
+        return response.sendStatus(500)
+    }
+}
+
 const getTrainersBySport = async (request, response) => {
 
     await User.findAll({
@@ -381,6 +419,7 @@ module.exports = {
     token,
     recoverPassword,
     updatePassword,
+    modifyPassword,
     getTrainers,
     getTrainersBySport
 }
