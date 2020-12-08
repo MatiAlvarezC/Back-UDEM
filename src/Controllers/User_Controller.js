@@ -47,9 +47,10 @@ const login = async (req, res) => {
 
         const expiresIn = 1800 /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
 
-        return res.send(jwt.sign(payload, process.env.SECRET, expiresIn))
+        return res.send(jwt.sign(payload, process.env.SECRET, {expiresIn}))
 
     } catch (e) {
+        console.log(e)
         return res.sendStatus(500)
     }
 }
