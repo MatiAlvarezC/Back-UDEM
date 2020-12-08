@@ -45,9 +45,9 @@ const login = async (req, res) => {
             updatedPassword: user.updatedPassword
         }
 
-        /*const expiresIn = 600*/ /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
+        const expiresIn = 1800 /** Se usará en producción, es para establecer tiempo de expiración de la sesión **/
 
-        return res.send(jwt.sign(payload, process.env.SECRET))
+        return res.send(jwt.sign(payload, process.env.SECRET), {expiresIn})
 
     } catch (e) {
         return res.sendStatus(500)
