@@ -101,7 +101,11 @@ const getById = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const players = await Player.findAll()
+        const players = await Player.findAll({
+            include: {
+                model: Medical_Data
+            }
+        })
 
         if (players.length === 0) {
             return res.sendStatus(404)
